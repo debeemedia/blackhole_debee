@@ -19,16 +19,16 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: [true, "field should not be empty" ],
     },
     first_name: {
         type: String,
-        required: true,
+        required: [true, "field should not be empty" ],
         trim: true
     },
     last_name: {
         type: String,
-        required: true,
+        required: [true, "field should not be empty" ],
         trim: true
     },
     security_question: {
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        default: ""
+        default: "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg"
     },
     gender: {
         type: String
