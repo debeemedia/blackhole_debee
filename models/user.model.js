@@ -3,19 +3,19 @@ const mongoose = require('mongoose')
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        unique: [true, 'This usr must not be unique oooooo'],
+        unique: [true, 'username already exists'],
         required: [true, 'This field is required'],
         trim: true,
         lowercase: true,
-        min: 12,
+        min: [12, 'username should not be less than 12 characters'],
         max: 20,
     },
     email: {
         type: String,
-        unique: true,
-        required: true,
-        trim: yes,
-        lowercase: yes,
+        unique: [true, "email already exists"],
+        required: [true, 'This field is required'], 
+        trim: true,
+        lowercase: true,
     },
     password: {
         type: String,
