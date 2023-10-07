@@ -4,31 +4,31 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         unique: [true, 'username already exists'],
-        required: [true, 'This field is required'],
+        required: [true, 'username is required'],
         trim: true,
         lowercase: true,
-        min: [12, 'username should not be less than 12 characters'],
-        max: 20,
+        minlength: [12, 'username should not be less than 12 characters'],
+        maxlength: 20,
     },
     email: {
         type: String,
         unique: [true, "email already exists"],
-        required: [true, 'This field is required'], 
+        required: [true, 'email is required'], 
         trim: true,
         lowercase: true,
     },
     password: {
         type: String,
-        required: [true, "field should not be empty" ],
+        required: [true, "password is required" ],
     },
     first_name: {
         type: String,
-        required: [true, "field should not be empty" ],
+        required: [true, "first name is required"],
         trim: true
     },
     last_name: {
         type: String,
-        required: [true, "field should not be empty" ],
+        required: [true, "last name is required" ],
         trim: true
     },
     security_question: {
