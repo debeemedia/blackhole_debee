@@ -14,6 +14,15 @@ const orderSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cart',
         required: true
+    },
+    order_date: {
+        type: Date
+    },
+    delivery_date: {
+        type: Date
+    },
+    is_fulfilled: {
+        default: false
     }
 })
 
