@@ -45,6 +45,18 @@ const userSchema = new mongoose.Schema({
         type: String
     }
 })
+userSchema.pre('save', async function(next){
+    try{
+        const saltRounds = bcrypt.genSalt(10)
+        const hashPassword = await bcrypt.hash(this.password, saltRounds)
+        this.password = hashPassword
+    }
+    catch(error){
+        return next(error)
+    }
+ })
+
+
 
 const UserModel = mongoose.model('User', userSchema)
 module.exports = UserModel
