@@ -1,8 +1,11 @@
 
 const express = require('express')
 const router = express.Router()
-const userRoute = require('./user.route')
+const { getUsers } = require('../controllers/user.controller')
+const { ROUTE_HOME } = require('../lib/page-route')
 
-router.use('/users', userRoute)
+//user route
+router.route(ROUTE_HOME).get(getUsers)
+
 
 module.exports = router
