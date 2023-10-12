@@ -1,3 +1,4 @@
+require('promise-dotenv').config()
 const express = require('express')
 const router = require('./routes')
 const connectToMongoDB = require('./db/connect')
