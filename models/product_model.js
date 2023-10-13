@@ -28,8 +28,8 @@ const productsSchema = new Mongoose.Schema(
         quantity: {
             type: Number,
             default: 1
-        },
-    }
+        }
+    }, {timestamps: true}
 ) 
 
 const ProductsModel = Mongoose.model('products', productsSchema)
