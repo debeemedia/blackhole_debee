@@ -21,7 +21,8 @@ const orderSchema = mongoose.Schema({
     delivery_date: {
         type: Date
     },
-    is_fulfilled: {
+    completed: {
+        type: Boolean,
         default: false
     }
 })
