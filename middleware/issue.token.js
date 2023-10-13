@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('promise-dotenv').config()
 const jwt = require('jsonwebtoken')
 
 async function issueNewToken (req, res) {
