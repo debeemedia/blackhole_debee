@@ -1,26 +1,22 @@
 require('promise-dotenv').config()
+const fs = require('fs')
 const express = require('express')
 const router = require('./routes')
 const connectToMongoDB = require('./db/connect')
-<<<<<<< HEAD
 const sendEmail = require('./services/sendEmail')
-=======
 const { ROUTE_HOME } = require('./lib/page-route')
->>>>>>> 58e0b7725c775d2b475c0a889e27902fc10838fe
+const path = require('path')
 
 const app = express()
+app.use(express.static(path.join(__dirname, 'public')))
 const PORT = process.env.PORT || 5000
 const mongoURL = process.env.MONGODB_URL || 'please enter your mongo db connection string in the created .env file'
 
 app.use(express.json())
 
-<<<<<<< HEAD
-
-
-app.get('/', (req, res)=>{
-=======
 app.get(ROUTE_HOME, (req, res)=>{
->>>>>>> 58e0b7725c775d2b475c0a889e27902fc10838fe
+    const filePath = path.join(__dirname, 'public', 'email_templates', 'example.html')
+    const emailFile = fs.readFileSync(filePath, 'utf-8')
     res.send('You are on your way to building one of the most beautiful things the world has even seen.')
 })
 app.use('/api', router)
