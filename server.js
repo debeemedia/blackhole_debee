@@ -13,6 +13,8 @@ app.use(express.json())
 app.get(ROUTE_HOME, (req, res)=>{
     res.send('You are on your way to building one of the most beautiful things the world has even seen.')
 })
+app.set('views', './views')
+app.set('view engine', 'ejs')
 app.use('/api', router)
 
 app.listen(PORT, async ()=>{

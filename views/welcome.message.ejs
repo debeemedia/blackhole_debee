@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Dosis:wght@200;300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <title>Email Service</title>
+    <title>Welcome</title>
 
     <style>
       body {
@@ -65,16 +65,16 @@
         <img src="./images/aphia email template.jpg" alt="" />
       </header>
       <div class="section-body">
-        <h1 class="email-heading section-body">EMAIL TITLE</h1>
-        <p class="email-message">Welcome first_name,</p>
+        <h1 class="email-heading section-body">WELCOME!</h1>
+        <p class="email-message">Welcome <%= first_name %>,</p>
         <p class="email-message">
-          You are welcome to Aphie! We are glad to have you onboard. Kindly
+          You are welcome to Aphia! We are glad to have you onboard. Kindly
           click on this link to verify your account
-          <a href="#">Click here</a>
+          <a href="https://aphia.onrender.com/verify/?email=<%= user.email %>">Click here</a>
         </p>
       </div>
       <footer>
-        <p>Aphie &copy;</p>
+        <p>Aphia &copy;</p>
       </footer>
     </div>
   </body>
