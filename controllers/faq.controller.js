@@ -71,10 +71,6 @@ async function updateFaq(req,res){
 async function deleteFaq(req,res){
     try {
         const faqId = req.params.id
-
-        if (!question && !answer) {
-            return res.status(400).json({success: false, message: 'Please provide at least a field'})
-        }
         
         if (!faqId) {
             return res.status(400).json({success: false, message: 'Please provide FAQ ID'})
