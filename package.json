@@ -14,15 +14,11 @@
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^7.6.0",
-<<<<<<< HEAD
-    "nodemailer": "^6.9.6",
-    "promise-dotenv": "^1.0.0"
-=======
     "promise-dotenv": "^1.0.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "jsonwebtoken": "^9.0.2"
->>>>>>> 58e0b7725c775d2b475c0a889e27902fc10838fe
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.6"
   }
 }
