@@ -1,3 +1,4 @@
+const UserModel = require("../models/user.model")
 const User = require("../models/user.model")
 const { renderWelcomeMessage, sendMail } = require("../utils/mail")
 
@@ -38,7 +39,24 @@ async function getUsers(req, res){
     }
 }
 
+async function updateUsers(req,res){
+const{username,email, password, first_name, last_name, image, gender  } = req.body
+const userId = req.user.id
+const user = await UserModel.findById(userId)
+if(username) user.username = username 
+if(email) user.email = email 
+if(password) user.password = password
+if(first_name) user.first_name = first_name
+if(last_name) user.last_name = last_name 
+if(image) user.image = image 
+if(gender) user.gender = gender
+await user.save()
+res.status(200).json({success: true, message: 'user updated succesfully'})
+
+}
+
 module.exports = {
     createUser,
-    getUsers
+    getUsers,
+    updateUsers
 }
