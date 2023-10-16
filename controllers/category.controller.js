@@ -23,7 +23,7 @@ async function createCategory(req,res){
 async function deleteCategory(req,res){
     try {
         const {_id} = req.user
-        const categoryId = req.params.id
+        const {categoryId} = req.params
         
         if (!categoryId) {
             return res.status(400).json({success: false, message: 'Please provide category ID'})
@@ -82,8 +82,8 @@ async function getProductsByCategory(req,res){
 async function updateCategory(req,res){
     try {
         const {_id} = req.user
-        const categoryId = req.params.id
-        const {name, description} = req.user
+        const {categoryId} = req.params
+        const {name, description} = req.body
 
         if (!name && !description) {
             return res.status(400).json({success: false, message: 'Please provide at least one field'})
@@ -113,11 +113,6 @@ async function updateCategory(req,res){
             return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
         }
 
-        const products = Products.find()
-        if (products.length == 0) {
-            return res.status(404).json({success: false, message: 'No product found in this category'})
-        }
-
         const updatedCategory = CategoryModel.findByIdAndUpdate(categoryId , updateDetails , {new: true})
         
         res.status(200).json({success: true, message: 'Category updated successfully'})
@@ -127,10 +122,25 @@ async function updateCategory(req,res){
     }
 }
 
+async function getAllCategories(req,res) {
+    try {
+        const categories = await CategoryModel.find().select('-__v')
+
+        if (categories.length == 0) {
+            return res.status(404).json({success: false, message: `No category found`})
+        }
+
+        res.status(200).json({success: true, message: categories})
+    } catch (error) {
+        res.status(500).json({success: false, error: error.message})   
+    }
+}
+
 
 module.exports = {
     createCategory,
     deleteCategory,
     updateCategory,
-    getProductsByCategory
+    getProductsByCategory,
+    getAllCategories
 }
