@@ -1,11 +1,9 @@
-require('promise-dotenv').config()
-const fs = require('fs')
+require('dotenv').config()
 const express = require('express')
 const router = require('./routes')
 const connectToMongoDB = require('./db/connect')
 const { ROUTE_HOME } = require('./lib/page-route')
 const path = require('path')
-const mailBuilder = require('./utils/mailBuilder')
 const { sendMail, buildEmailTemplate } = require('./utils/mail')
 
 const app = express()
@@ -31,6 +29,6 @@ app.set('view engine', 'ejs')
 app.use('/api', router)
 
 app.listen(PORT, async ()=>{
-    await connectToMongoDB(mongoURL)
     console.log(`Server running on port ${PORT}`)
+    await connectToMongoDB(mongoURL)
 })
