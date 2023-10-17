@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 })
 
 // function to render the email welcome message
-async function renderWelcomeMessage (fileName, data) {
+async function buildEmailTemplate (fileName, data) {
     return await ejs.renderFile(`views/${fileName}`, data)
 }
 
@@ -37,4 +37,4 @@ async function sendMail (option) {
     }
 }
 
-module.exports = {sendMail, renderWelcomeMessage}
+module.exports = {sendMail, buildEmailTemplate}
