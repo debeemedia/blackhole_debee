@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema({
         required: [true, "last name is required" ],
         trim: true
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
     security_question: {
         type: String
     },
@@ -48,6 +53,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 })
 userSchema.pre('save', async function(next){
