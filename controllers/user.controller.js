@@ -1,6 +1,6 @@
 const UserModel = require("../models/user.model")
 const User = require("../models/user.model")
-const { renderWelcomeMessage, sendMail } = require("../utils/mail")
+const { sendMail, buildEmailTemplate } = require("../utils/mail")
 
 async function createUser(req,res){
     const{username, email, password, first_name, last_name, security_question, security_answer, image, gender} = req.body
@@ -19,7 +19,7 @@ async function createUser(req,res){
                 to: email,
                 from: 'Aphia',
                 subject: 'Registration Successful',
-                html: await renderWelcomeMessage(first_name, newUser)
+                html: await buildEmailTemplate(newUser)
             }
             await sendMail(emailOption, res)
 
