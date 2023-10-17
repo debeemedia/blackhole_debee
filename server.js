@@ -18,12 +18,12 @@ console.log(__dirname)
 app.get(ROUTE_HOME, async(req, res)=>{
 
     //This is how we would use to send emails
-    // const emailResult = await sendMail({
-    //     to: 'chiemelapromise30@gmail.com',
-    //      from: 'admin',
-    //       subject: 'Confirmation Email',
-    //        html: await buildEmailTemplate('request_password_reset.ejs', {first_name: 'Promise', email: 'chiemelapromise30@gmail.com'})
-    // })
+    const emailResult = await sendMail({
+        to: 'chiemelapromise30@gmail.com',
+         from: 'admin',
+          subject: 'Confirmation Email',
+           html: await buildEmailTemplate('request_password_reset.ejs', {first_name: 'Promise', email: 'chiemelapromise30@gmail.com'})
+    })
     return res.send('You are on your way to building one of the most beautiful things the world has even seen.')
 })
 app.set('views', './views')
