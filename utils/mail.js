@@ -6,29 +6,31 @@ const ejs = require('ejs')
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'techdebee@gmail.com',
+        user: process.env.AUTH_EMAIL,
         pass: process.env.NODEMAILER_PASS
     }
 })
 
 // function to render the email welcome message
-async function renderWelcomeMessage (first_name, user) {
-    return await ejs.renderFile('views/welcome.message.ejs', {first_name, user})
+async function renderWelcomeMessage (fileName, data) {
+    return await ejs.renderFile(`views/${fileName}`, data)
 }
 
 // function to send mail
-async function sendMail (option, res) {
+async function sendMail (option) {
     try {
         // check if there is an email option specified (from the register/createUser controller)
-        if (!option) {
-            return res.status(400).json({success: false, message: 'Please provide email options'})
+        if (!option.to || !option.from || !option.subject || !option.html) {
+            console.log({success: false, message: 'Please provide email options [to from subject html]'})
+            return false
         }
         transporter.sendMail(option, (err, info) => {
             if (err) {
-                console.log('Error sending mail:', err.message)
+                return console.log('Error sending mail:', err.message)
             }
-            console.log(info)
+            console.log('Mail sent!', info.response)
         })
+        return true
         
     } catch (error) {
         console.log(error.message)
