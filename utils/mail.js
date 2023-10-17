@@ -6,14 +6,14 @@ const ejs = require('ejs')
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'techdebee@gmail.com',
+        user: process.env.AUTH_EMAIL,
         pass: process.env.NODEMAILER_PASS
     }
 })
 
 // function to render the email welcome message
-async function renderWelcomeMessage (first_name, user) {
-    return await ejs.renderFile('views/welcome.message.ejs', {first_name, user})
+async function renderWelcomeMessage (fileName, data) {
+    return await ejs.renderFile(`views/${fileName}`, data)
 }
 
 // function to send mail
@@ -28,7 +28,7 @@ async function sendMail (option) {
             if (err) {
                 return console.log('Error sending mail:', err.message)
             }
-            console.log({success: info})
+            console.log('Mail sent!', info.response)
         })
         return true
         

@@ -14,16 +14,15 @@ const PORT = process.env.PORT || 5000
 const mongoURL = process.env.MONGODB_URL || 'please enter your mongo db connection string in the created .env file'
 
 app.use(express.json())
-
+console.log(__dirname)
 app.get(ROUTE_HOME, async(req, res)=>{
-    const mailFile = mailBuilder('example.html')
 
     // renderWelcomeMessage('promise', {email: 'chiemelapromise30@gmail.com'})
     const emailResult = await sendMail({
         to: 'chiemelapromise30@gmail.com',
          from: 'admin',
           subject: 'Confirmation Email',
-           html: '<h1>Title</h1>'
+           html: await renderWelcomeMessage('request_password_reset.ejs', {first_name: 'Promise', email: 'chiemelapromise30@gmail.com'})
     })
     if(emailResult){
         return res.send('You are on your way to building one of the most beautiful things the world has even seen.')
