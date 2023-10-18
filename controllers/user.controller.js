@@ -19,7 +19,7 @@ async function createUser(req,res){
                 to: email,
                 from: 'Aphia',
                 subject: 'Registration Successful',
-                html: await buildEmailTemplate(newUser)
+                html: await buildEmailTemplate('verify_email.ejs', newUser)
             }
             await sendMail(emailOption, res)
 
