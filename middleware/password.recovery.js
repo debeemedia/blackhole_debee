@@ -1,7 +1,6 @@
-const express = require('express');
-const app = express();
+
 const nodemailer = require('nodemailer');
-const dotenv = require("promise-dotenv").config()
+const dotenv = require('promise-dotenv').config()
 
 
 async function forgetPassword(req,res){
