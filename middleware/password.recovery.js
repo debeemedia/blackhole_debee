@@ -1,6 +1,12 @@
 
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer')
+const crypto = require('crypto')
 const dotenv = require('promise-dotenv').config()
+
+async function generatePasswordResetToken() {
+  const token = await crypto.randomBytes(20).toString('hex');
+  return token;
+}
 
 
 async function forgetPassword(req,res){
@@ -25,20 +31,24 @@ async function forgetPassword(req,res){
     subject: 'Reset your password',
     text: `Click the following link to reset your password: ${app-link}/reset-password/${token}`,
   };
-} 
 
-  transporter.sendMail(mailOption, (err, info) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({success: false, message: 'Error sending email' });
-    }
-
-    return res.status(200).json({success: true, message: 'Email sent successfully' })
-  });
-
+  try{
+  await transporter.sendMail(mailOption)
+   }
+   catch(error){
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Error sending email' });
+  }
+  return res.status(200).json({ success: true, message: 'Email sent successfully' });
+}
+    
 
  async function resetPassword (req, res){
-  const { email, token, password } = req.body;
+  const { email, token, password } = req.body
+  if (!password) {
+    return res.status(400).json({ success: false, message: 'New password is required' });
+  }
+
 
   const user = await user.findOne({ email, passwordResetToken: token });
   if (!user) {
