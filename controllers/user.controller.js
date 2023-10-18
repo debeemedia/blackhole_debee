@@ -21,7 +21,7 @@ async function createUser(req,res){
                 subject: 'Registration Successful',
                 html: await buildEmailTemplate('verify_email.ejs', newUser)
             }
-            await sendMail(emailOption, res)
+            await sendMail(emailOption)
 
             res.status(201).json({success: true, message: 'user created succesfully'})
         }
