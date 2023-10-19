@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const orderSchema = mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true
     },
     street_address: {
@@ -28,11 +28,11 @@ const orderSchema = mongoose.Schema({
     alternate_phone_number: {
         type: Number
     },
-    cart_id: {
+    product_ids: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cart',
+        ref: 'product',
         required: true
-    },
+    }],
     order_date: {
         type: Date
     },
@@ -45,5 +45,5 @@ const orderSchema = mongoose.Schema({
     }
 })
 
-const Order = mongoose.model('Order', orderSchema)
-module.exports = Order
+const OrderModel = mongoose.model('order', orderSchema)
+module.exports = OrderModel
