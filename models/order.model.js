@@ -6,9 +6,27 @@ const orderSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
-    address: {
+    street_address: {
         type: String,
         required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    state: {
+        type: String,
+        required: true
+    },
+    postal_code: {
+        type: Number
+    },
+    phone_number: {
+        type: Number,
+        required: true
+    },
+    alternate_phone_number: {
+        type: Number
     },
     cart_id: {
         type: mongoose.Schema.Types.ObjectId,
