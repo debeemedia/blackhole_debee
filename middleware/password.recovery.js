@@ -1,66 +1,77 @@
 
 const nodemailer = require('nodemailer')
-const crypto = require('crypto')
+const crypto = require('crypto');
+const RecoverModel = require('../models/password-remodel');
 const dotenv = require('promise-dotenv').config()
+const {buildEmailTemplate, sendMail} = require('../utils/mail');
+const UserModel = require('../models/user.model');
 
-async function generatePasswordResetToken() {
-  const token = await crypto.randomBytes(20).toString('hex');
+
+function generatePasswordResetToken() {
+  const token = crypto.randomBytes(20).toString('hex');
   return token;
 }
 
 
-async function forgetPassword(req,res){
+async function generateToken(req,res){
     const {email} = req.body
-    const user = await user.findOne({email})
+    const user = await UserModel.findOne({email})
     if(!user){
         return res.status(404).json({success: false, message: 'User not found' })
     }
-    const token = await generatePasswordResetToken()
-  user.passwordResetToken = token;
-  await user.save()
+  const user_id = user.user_id
+  const resetToken = new RecoverModel({
+    token: generatePasswordResetToken(),
+    user_id
+  })
+  await resetToken.save()
+  
 
-  const transporter = nodemailer.createTransport({
-    auth: {
-        user: 'cijeoma559@gmail.com',
-        pass: process.env.NODEMAILER
-    },
-  });
   const mailOption = {
     from: 'cijeoma559@gmail.com',
     to: email,
     subject: 'Reset your password',
-    text: `Click the following link to reset your password: ${app-link}/reset-password/${token}`,
-  };
-
-  try{
-  await transporter.sendMail(mailOption)
-   }
-   catch(error){
-    console.error(error);
-    return res.status(500).json({ success: false, message: 'Error sending email' });
+    html: await buildEmailTemplate('request_password_reset.ejs', {user, token:resetToken.token})
   }
-  return res.status(200).json({ success: true, message: 'Email sent successfully' });
+  await sendMail(mailOption)
+  res.status(200).json({succes: true, message: 'token expires in 5minutes, '})
+
+  
 }
     
 
  async function resetPassword (req, res){
-  const { email, token, password } = req.body
+  const {password } = req.body
+  const email = req.query.email
+  const token = req.query.token
+
   if (!password) {
     return res.status(400).json({ success: false, message: 'New password is required' });
   }
 
 
-  const user = await user.findOne({ email, passwordResetToken: token });
+  const user = await UserModel.findOne({email});
   if (!user) {
-    return res.status(401).json({success: false, message: 'Invalid password reset token' });
+    return res.status(404).json({success: false, message: 'user not found' });
   }
-
+  const user_id = user._id
+  const savedToken = await RecoverModel.findOne({user_id})
+  if(!savedToken){
+    return res.status(401).json({success: false, message: 'invalid or expired token' });
+  }
+  if(token != savedToken){
+    return res.status(401).json({success: false, message: 'invalid token' });
+  }
   user.password = password;
-  await user.save();
+  await user.save()
+  await RecoverModel.findByIdAndDelete(savedToken._id)
+  if(Date.now() > savedToken.expTime){
+    await RecoverModel.findByIdAndDelete(savedToken._id)  
+  }  
+   res.status(200).json({success: true, message: 'Password reset successfully' })
 
-  return res.status(200).json({success: true, message: 'Password reset successfully' });
  }
   
-module.exports={forgetPassword,
+module.exports={generateToken,
 resetPassword
 }
