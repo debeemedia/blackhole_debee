@@ -3,6 +3,7 @@ const Product = require("../models/product.model")
 // CREATE
 async function createProduct (req, res) {
     try {
+        const user_id = req.user.id
         // destructure request body
         const {name, description, price, image, category, quantity} = req.body
         // validate input
@@ -16,7 +17,7 @@ async function createProduct (req, res) {
         }
         // create new product and save to database
         const newProduct = new Product({
-            name, description, price, image, category, quantity
+            user_id, name, description, price, image, category, quantity
         })
         const savedProduct = await newProduct.save()
 
