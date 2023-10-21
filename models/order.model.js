@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const orderSchema = mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: true
     },
     street_address: {
@@ -30,7 +30,7 @@ const orderSchema = mongoose.Schema({
     },
     product_ids: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'product',
+        ref: 'Product',
         required: true
     }],
     order_date: {
@@ -45,5 +45,5 @@ const orderSchema = mongoose.Schema({
     }
 })
 
-const OrderModel = mongoose.model('order', orderSchema)
+const OrderModel = mongoose.model('Order', orderSchema)
 module.exports = OrderModel
