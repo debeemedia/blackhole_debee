@@ -24,7 +24,7 @@ const paymentSchema = mongoose.Schema({
     payment_method: {
         type: String,
         required: true,
-        default: 'Credit Card'
+        default: 'Bank transfer'
     },
     amount: {
         type: Number,
