@@ -1,4 +1,4 @@
-require('promise-dotenv').config()
+require('dotenv').config()
 const User = require("../models/user.model");
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -18,6 +18,11 @@ async function login (req, res) {
         // verify password
         bcrypt.compare(password, user.password, (err, result) => {
             if (result === true) {
+                // check if user is verified
+                if (!user.verified) {
+                    return res.status(403).json({success: false, message: 'user is not verified'})
+                }
+
                 // issue access token
                 const accessToken = jwt.sign({id: user._id, email: user.email, username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'})
                 // issue refresh token

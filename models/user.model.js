@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -7,8 +8,7 @@ const userSchema = new mongoose.Schema({
         required: [true, 'username is required'],
         trim: true,
         lowercase: true,
-        minlength: [12, 'username should not be less than 12 characters'],
-        maxlength: 20,
+        maxlength: [24, 'username should not be more than 24 characters'],
     },
     email: {
         type: String,
@@ -53,13 +53,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 })
 userSchema.pre('save', async function(next){
     try{
         if(this.isModified('password')){
-        const saltRounds = bcrypt.genSalt(10)
-        const hashPassword = await bcrypt.hash(this.password, saltRounds)
+        // const saltRounds = bcrypt.genSalt(10)
+        // const hashPassword = await bcrypt.hash(this.password, saltRounds)
+        const hashPassword = await bcrypt.hash(this.password, 10)
         this.password = hashPassword
     }
     next()
