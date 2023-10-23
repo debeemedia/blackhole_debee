@@ -51,6 +51,7 @@ async function listenWebhook (req, res) {
         // use secret hash in the webhook
         const secretHash = process.env.FLUTTERWAVE_WEBHOOK_HASH
         const signature = req.headers['verif-hash']
+        // // verify the authenticity of webhook (if it is from flutterwave)
         // if (!signature || signature != secretHash) {
         //     return res.status(401).json({success: false, message: 'No/Invalid webhook secret hash'})
         // }
@@ -67,16 +68,18 @@ async function listenWebhook (req, res) {
 
         // check if payment was successful
         if (payload.status !== 'successful') {
-            return res.status(400).json({success: false, message: 'Payment unsuccessful'})
+            console.log('Payment unsuccessful')
         }
 
         // check if payment is in full
         if (payload.charged_amount < payload.amount) {
-            return res.status(400).json({success: false, message: `Payment incomplete. Amount to pay: ${payload.amount}. Amount paid: ${payload.charged_amount}`})
+            console.log(`Payment incomplete. Amount to pay: ${payload.amount}. Amount paid: ${payload.charged_amount}`)
         }
 
-        // update order status in the database
-        await OrderModel.findByIdAndUpdate(order._id, {completed: true}, {new: true})
+        if (payload.status === 'successful' && payload.charged_amount >= payload.amount) {
+            // update order status in the database
+            await OrderModel.findByIdAndUpdate(order._id, {completed: true}, {new: true})
+        }
 
         // acknowledge receipt of webhook by returning 200 status code to flutterwave
         res.status(200).end()
