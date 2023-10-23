@@ -1,7 +1,8 @@
 require('dotenv').config()
 const axios = require('axios');
 const UserModel = require('../models/user.model');
-const {v4: uuidv4} = require('uuid')
+const {v4: uuidv4} = require('uuid');
+const Order = require('../models/order.model');
 const base_api_url = 'https://api.flutterwave.com/v3'
 
 async function initiatePayment (req, res) {
@@ -47,6 +48,16 @@ async function listenWebhook (req, res) {
         // }
         const payload = req.body
         console.log(payload);
+
+        const email = payload.customer.email
+        const user = await UserModel.findOne({email})
+        const user_id = user._id
+        const order = await Order.findOne({user_id})
+
+        if (payload.status === 'successful') {
+            order.completed = true
+            await order.save()
+        }
         res.status(200).end()
     } catch (error) {
         console.log(error.message);
