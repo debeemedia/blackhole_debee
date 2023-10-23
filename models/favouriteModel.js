@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const favouritesSchema = new mongoose.Schema({
     userId : {
-        Type:mongoose.Schema.Types.ObjectId,
+        type:mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     },
@@ -10,7 +10,7 @@ const favouritesSchema = new mongoose.Schema({
         product: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            ref: 'products'
+            ref: 'product'
         },
         addedAt: {
             type: Date,
@@ -20,6 +20,6 @@ const favouritesSchema = new mongoose.Schema({
     ]
 })
 
-const Favourites = mongoose.model('favourites', favouritesSchema)
+const Favourite = mongoose.model('favourite', favouritesSchema)
 
-module.exports = Favourites
+module.exports = Favourite
