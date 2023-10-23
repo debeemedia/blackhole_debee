@@ -22,7 +22,7 @@ const orderSchema = mongoose.Schema({
         type: Number
     },
     phone_number: {
-        type: Number,
+        type: String,
         required: true
     },
     alternate_phone_number: {
