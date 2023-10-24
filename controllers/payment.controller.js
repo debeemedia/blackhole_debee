@@ -61,22 +61,22 @@ async function listenWebhook (req, res) {
         console.log(payload);
 
         // find customer details from database
-        const email = payload.customer.email
+        const email = payload.data.customer.email
         const user = await UserModel.findOne({email})
         const user_id = user._id
         const order = await Order.findOne({user_id})
 
         // check if payment was successful
-        if (payload.status !== 'successful') {
+        if (payload.data.status !== 'successful') {
             console.log('Payment unsuccessful')
         }
 
         // check if payment is in full
-        if (payload.charged_amount < payload.amount) {
-            console.log(`Payment incomplete. Amount to pay: ${payload.amount}. Amount paid: ${payload.charged_amount}`)
+        if (payload.data.charged_amount < payload.data.amount) {
+            console.log(`Payment incomplete. Amount to pay: ${payload.data.amount}. Amount paid: ${payload.data.charged_amount}`)
         }
 
-        if (payload.status === 'successful' && payload.charged_amount >= payload.amount) {
+        if (payload.data.status === 'successful' && payload.data.charged_amount >= payload.data.amount) {
             // update order status in the database
             await OrderModel.findByIdAndUpdate(order._id, {completed: true}, {new: true})
         }
