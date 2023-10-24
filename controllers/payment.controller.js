@@ -52,10 +52,10 @@ async function listenWebhook (req, res) {
         // use secret hash in the webhook
         const secretHash = process.env.FLUTTERWAVE_WEBHOOK_HASH
         const signature = req.headers['verif-hash']
-        // // verify the authenticity of webhook (if it is from flutterwave)
-        // if (!signature || signature != secretHash) {
-        //     return res.status(401).json({success: false, message: 'No/Invalid webhook secret hash'})
-        // }
+        // // verify the authenticity of webhook payload (if it is from flutterwave)
+        if (!signature || signature != secretHash) {
+            return res.status(401).json({success: false, message: 'No/Invalid webhook secret hash'})
+        }
 
         // get payload from flutterwave
         const payload = req.body
