@@ -82,7 +82,7 @@ async function listenWebhook (req, res) {
         }
 
         // acknowledge receipt of webhook by returning 200 status code to flutterwave
-        res.status(200).end()
+        res.status(200)
 
     } catch (error) {
         console.log(error.message);
