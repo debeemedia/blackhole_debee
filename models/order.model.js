@@ -28,11 +28,15 @@ const orderSchema = mongoose.Schema({
     alternate_phone_number: {
         type: Number
     },
-    product_ids: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
+    amount: {
+        type: Number,
         required: true
-    }],
+    },
+    currency: {
+        type: String,
+        required: true,
+        default: 'NGN'
+    },
     order_date: {
         type: Date
     },
