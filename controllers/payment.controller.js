@@ -3,6 +3,7 @@ const axios = require('axios');
 const UserModel = require('../models/user.model');
 const {v4: uuidv4} = require('uuid');
 const Order = require('../models/order.model');
+const PaymentModel = require('../models/payment.model');
 const base_api_url = 'https://api.flutterwave.com/v3'
 
 // function to initiate payment
@@ -65,6 +66,7 @@ async function listenWebhook (req, res) {
         const user = await UserModel.findOne({email})
         const user_id = user._id
         const order = await Order.findOne({user_id})
+        const order_id = order._id
 
         // check if payment was successful
         if (payload.data.status !== 'successful') {
@@ -77,8 +79,21 @@ async function listenWebhook (req, res) {
         }
 
         if (payload.data.status === 'successful' && payload.data.charged_amount >= payload.data.amount) {
+            // create a payment record in the database
+            const paymentData = {
+                user_id,
+                order_id,
+                transaction_id: payload.data.tx_ref,
+                payment_gateway: 'Flutterwave',
+                payment_method: 'Bank transfer',
+                amount: payload.data.amount,
+                currency: payload.data.currency,
+                status: 'completed'
+            }
+            await PaymentModel.create(paymentData)
+            
             // update order status in the database
-            await OrderModel.findByIdAndUpdate(order._id, {completed: true}, {new: true})
+            await OrderModel.findByIdAndUpdate(order_id, {completed: true}, {new: true})
         }
 
         // acknowledge receipt of webhook by returning 200 status code to flutterwave
