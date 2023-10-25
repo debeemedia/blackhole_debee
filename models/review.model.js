@@ -3,12 +3,12 @@ const mongoose = require('mongoose')
 const reviewSchema = new mongoose.Schema({
     product_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'product',
+        ref: 'Product',
         required: true
     },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: true
     },
     comment: {
@@ -21,4 +21,4 @@ const reviewSchema = new mongoose.Schema({
     }
 }, {timestamps: true})
 
-module.exports.ReviewModel = mongoose.model('review' , reviewSchema)
+module.exports.ReviewModel = mongoose.model('Review' , reviewSchema)
