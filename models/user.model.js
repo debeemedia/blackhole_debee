@@ -31,10 +31,9 @@ const userSchema = new mongoose.Schema({
         required: [true, "last name is required" ],
         trim: true
     },
-    role: {
+    phone_number: {
         type: String,
-        enum: ['user', 'admin'],
-        default: 'user'
+        required: [true, "phone number is required"]
     },
     security_question: {
         type: String
@@ -47,12 +46,14 @@ const userSchema = new mongoose.Schema({
         default: "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg"
     },
     gender: {
-        type: String
+        type: String,
+        enum: ['male', 'female', 'prefer not to say']
     },
     role: {
         type: String,
         enum: ['user', 'vendor', 'admin'],
-        default: 'user'
+        default: 'user',
+        required: true
     },
     verified: {
         type: Boolean,
