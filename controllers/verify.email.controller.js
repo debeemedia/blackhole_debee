@@ -1,10 +1,14 @@
 const User = require("../models/user.model");
+const {empty} = require('../utils/helpers')
 
 // function to verify the email
 async function verifyEmail (req, res) {
     try {
         // get email from the query parameter in welcome.message.ejs
         const email = req.query.email
+        if(empty(email)){
+            return res.status(500).json({success: false, message: 'Something went wrong. Try again later'})
+        }
         // find the user by the email
         const user = await User.findOne({email})
         if (!user) {
