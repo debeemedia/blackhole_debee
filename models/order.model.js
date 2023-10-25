@@ -6,25 +6,68 @@ const orderSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
-    address: {
+    street_address: {
         type: String,
         required: true
     },
-    cart_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cart',
+    city: {
+        type: String,
         required: true
     },
+    state: {
+        type: String,
+        required: true
+    },
+    postal_code: {
+        type: Number
+    },
+    phone_number: {
+        type: String,
+        required: true
+    },
+    alternate_phone_number: {
+        type: String
+    },
+    products: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true
+    }],
+    state: {
+        type: String,
+        required: true
+    },
+    postal_code: {
+        type: Number
+    },
+    phone_number: {
+        type: String,
+        required: true
+    },
+    alternate_phone_number: {
+        type: Number
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    currency: {
+        type: String,
+        required: true,
+        default: 'NGN'
+    },
     order_date: {
-        type: Date
+        type: Date,
+        default: Date.now()
     },
     delivery_date: {
         type: Date
     },
-    is_fulfilled: {
+    completed: {
+        type: Boolean,
         default: false
     }
 })
 
-const Order = mongoose.model('Order', orderSchema)
-module.exports = Order
+const OrderModel = mongoose.model('Order', orderSchema)
+module.exports = OrderModel

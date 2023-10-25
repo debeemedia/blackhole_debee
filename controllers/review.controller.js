@@ -83,7 +83,7 @@ async function updateReview(req,res){
             return res.status(404).json({success: false, message: 'Review not found'})
         }
 
-        if (review.user_id == _id) {
+        if (review.user_id !== _id) {
             return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
         }
         
@@ -120,7 +120,7 @@ async function deleteReview(req,res){
             return res.status(404).json({success: false, message: 'Review not found'})
         }
 
-        if (review.user_id == _id) {
+        if (review.user_id !== _id) {
             return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
         }
 
