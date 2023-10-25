@@ -11,6 +11,6 @@ const faqSchema = new mongoose.Schema({
     }
   });
   
-  const FaqModel = mongoose.model('faq', faqSchema);
+  const FaqModel = mongoose.model('Faq', faqSchema);
  
   module.exports = FaqModel
