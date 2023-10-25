@@ -1,7 +1,12 @@
-const Mongoose = require('mongoose')
+const mongoose = require('mongoose')
 
-const productSchema = new Mongoose.Schema(
+const productSchema = new mongoose.Schema(
     {
+        user_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
         name: {
             type: String,
             required: true
@@ -22,7 +27,8 @@ const productSchema = new Mongoose.Schema(
             default: 'https://pic.onlinewebfonts.com/thumbnails/icons_90947.svg'
         },
         category: {
-            type: Mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Category',
             required: true
         },
         quantity: {
@@ -32,6 +38,6 @@ const productSchema = new Mongoose.Schema(
     }, {timestamps: true}
 ) 
 
-const ProductModel = Mongoose.model('Product', productSchema)
+const ProductModel = mongoose.model('Product', productSchema)
 
 module.exports = ProductModel
