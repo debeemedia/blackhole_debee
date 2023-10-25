@@ -42,7 +42,7 @@ async function createUser(req, res) {
     if (!empty(emailExist)) {
       res.status(400).json({ success: false, message: "email already exists" });
     } else {
-      const newUser = await new User({
+      const newUser = new User({
         username,
         email,
         password,

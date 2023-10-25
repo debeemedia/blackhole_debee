@@ -26,6 +26,25 @@ const orderSchema = mongoose.Schema({
         required: true
     },
     alternate_phone_number: {
+        type: String
+    },
+    products: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true
+    }],
+    state: {
+        type: String,
+        required: true
+    },
+    postal_code: {
+        type: Number
+    },
+    phone_number: {
+        type: String,
+        required: true
+    },
+    alternate_phone_number: {
         type: Number
     },
     amount: {
@@ -38,7 +57,8 @@ const orderSchema = mongoose.Schema({
         default: 'NGN'
     },
     order_date: {
-        type: Date
+        type: Date,
+        default: Date.now()
     },
     delivery_date: {
         type: Date
