@@ -73,11 +73,6 @@ async function listenWebhook (req, res) {
             console.log('Payment unsuccessful')
         }
 
-        // check if payment is in full
-        if (payload.data.charged_amount < payload.data.amount) {
-            console.log(`Payment incomplete. Amount to pay: ${payload.data.amount}. Amount paid: ${payload.data.charged_amount}`)
-        }
-
         if (payload.data.status === 'successful' && payload.data.charged_amount >= payload.data.amount) {
             // create a payment record in the database
             const paymentData = {
