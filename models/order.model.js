@@ -33,6 +33,29 @@ const orderSchema = mongoose.Schema({
         ref: 'Product',
         required: true
     }],
+    state: {
+        type: String,
+        required: true
+    },
+    postal_code: {
+        type: Number
+    },
+    phone_number: {
+        type: String,
+        required: true
+    },
+    alternate_phone_number: {
+        type: Number
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    currency: {
+        type: String,
+        required: true,
+        default: 'NGN'
+    },
     order_date: {
         type: Date,
         default: Date.now()
