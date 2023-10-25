@@ -1,11 +1,10 @@
 const UserModel = require("../models/user.model");
-const User = require("../models/user.model");
 const VendorModel = require("../models/vendor.model");
 const { empty } = require("../utils/helpers");
 const { sendMail, buildEmailTemplate } = require("../utils/mail");
 const validateData = require("../utils/validate");
 
-async function createUser(req, res) {
+async function createVendor(req, res) {
   const {
     username,
     email,
@@ -13,6 +12,11 @@ async function createUser(req, res) {
     first_name,
     last_name,
     phone_number,
+    business_name,
+    account_number,
+    bank,
+    bank_code,
+    account_name,
     security_question,
     security_answer,
     image,
@@ -25,7 +29,12 @@ async function createUser(req, res) {
     password: "string|required|min:8",
     first_name: "string|required",
     last_name: "string|required",
-    phone_number: "string|required"
+    phone_number: "string|required",
+    business_name: "string|required",
+    account_number: "string|required",
+    bank: "string|required",
+    bank_code: "string|required",
+    account_name: "string|required",
   };
   const validateMessage = {
     required: ":attribute is required",
@@ -40,73 +49,50 @@ async function createUser(req, res) {
   }
 
   try {
-    const emailExist = await User.findOne({ email: email }) || await VendorModel.findOne({email});
+    const emailExist = await VendorModel.findOne({ email }) || await UserModel.findOne({email});
 
     if (!empty(emailExist)) {
       res.status(400).json({ success: false, message: "email already exists" });
     } else {
-      const newUser = new User({
+      const newVendor = new VendorModel({
         username,
         email,
         password,
         first_name,
         last_name,
         phone_number,
-        role: 'user',
+        business_name,
+        account_number,
+        bank,
+        bank_code,
+        account_name,
+        role: 'vendor',
         security_question,
         security_answer,
         image,
         gender,
       });
-      await newUser.save();
+      await newVendor.save();
 
-      // send a mail to user on successful registration
+      // send a mail to vendor on successful registration
       const emailOption = {
         to: email,
         from: "Aphia",
         subject: "Registration Successful",
-        html: await buildEmailTemplate("confirmation.ejs", newUser),
+        html: await buildEmailTemplate("confirmation.ejs", newVendor),
       };
       await sendMail(emailOption, res);
 
       res
         .status(201)
-        .json({ success: true, message: "user created succesfully" });
+        .json({ success: true, message: "vendor created succesfully" });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
-async function getUsers(req, res) {
-  try {
-    const users = await User.find();
-    res.status(200).json({ success: true, message: users });
-  } catch (error) {
-    res.status(500).json(error);
-  }
-}
-
-async function updateUser(req, res) {
-    const { username, email, password, first_name, last_name, image, gender } =req.body;
-    const userId = req.user.id;
-    if(empty(userId)){
-        return res.status(404).json({success: false, message: 'Something went wrong. Please try again'})
-    }
-    const user = await UserModel.findById(userId);
-    if (!empty(username)) user.username = username;
-    if (!empty(email)) user.email = email;
-    if (!empty(password)) user.password = password;
-    if (!empty(first_name)) user.first_name = first_name;
-    if (!empty(last_name)) user.last_name = last_name;
-    if (!empty(image)) user.image = image;
-    if (!empty(gender)) user.gender = gender;
-    await user.save();
-    res.status(200).json({ success: true, message: "user updated succesfully" });
-}
 
 module.exports = {
-  createUser,
-  getUsers,
-  updateUser,
+    createVendor
 };
