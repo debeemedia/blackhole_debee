@@ -19,6 +19,8 @@ async function initiatePayment (req, res) {
             amount: 1000,
             currency: 'NGN',
             email: user.email,
+            phone_number: user.phone_number,
+            fullname: `${user.first_name}, ${user.last_name}`,
             tx_ref: `TXN-${uuidv4()}`,
             narration: 'Aphia'
         }
