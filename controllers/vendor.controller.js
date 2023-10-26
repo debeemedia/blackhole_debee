@@ -1,3 +1,4 @@
+const UserModel = require("../models/user.model");
 const VendorModel = require("../models/vendor.model");
 const { empty } = require("../utils/helpers");
 const { sendMail, buildEmailTemplate } = require("../utils/mail");
@@ -48,9 +49,10 @@ async function createVendor(req, res) {
   }
 
   try {
-    const vendorExist = await VendorModel.findOne({$or: [{email}, {username}]})
+    // vendor is an extension of user so we check the user model for existing email or username
+    const existing = await UserModel.findOne({$or: [{email}, {username}]})
 
-    if (!empty(vendorExist)) {
+    if (!empty(existing)) {
       res.status(400).json({ success: false, message: "email or username already exists" });
     } else {
       const newVendor = new VendorModel({
