@@ -33,20 +33,6 @@ const orderSchema = mongoose.Schema({
         ref: 'Product',
         required: true
     }],
-    state: {
-        type: String,
-        required: true
-    },
-    postal_code: {
-        type: Number
-    },
-    phone_number: {
-        type: String,
-        required: true
-    },
-    alternate_phone_number: {
-        type: Number
-    },
     amount: {
         type: Number,
         required: true
@@ -66,6 +52,9 @@ const orderSchema = mongoose.Schema({
     completed: {
         type: Boolean,
         default: false
+    },
+    tx_ref: {
+        type: String
     }
 })
 
