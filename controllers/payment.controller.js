@@ -34,14 +34,12 @@ async function initiatePayment (req, res) {
         })
         .then(response => {
             console.log(response.data)
+            console.log('tx_ref:', paymentData.tx_ref);
+            res.status(200).json({success: true, message: 'Payment initiated successfully', paymentInitiation: response.data})
         })
         .catch(error => {
             console.log(error);
         })
-
-        console.log(paymentData.tx_ref);
-
-        res.status(200).json({success: true, message: 'Payment initiated successfully'})
         
     } catch (error) {
         console.log(error.message);
