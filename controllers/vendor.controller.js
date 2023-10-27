@@ -80,7 +80,7 @@ async function createVendor(req, res) {
         to: email,
         from: "Aphia",
         subject: "Registration Successful",
-        html: await buildEmailTemplate("confirmation.ejs", newVendor),
+        html: await buildEmailTemplate("verify_email.ejs", newVendor),
       };
       await sendMail(emailOption, res);
 
