@@ -34,7 +34,7 @@ async function getQuestions(req,res) {
 
 async function updateFaq(req,res){
     try {
-        const faqId = req.params.id
+        const {faqId} = req.params
         const {question, answer} = req.body
 
         if (!question && !answer) {
@@ -70,7 +70,7 @@ async function updateFaq(req,res){
 
 async function deleteFaq(req,res){
     try {
-        const faqId = req.params.id
+        const {faqId} = req.params
         
         if (!faqId) {
             return res.status(400).json({success: false, message: 'Please provide FAQ ID'})
