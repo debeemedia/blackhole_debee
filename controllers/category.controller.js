@@ -5,12 +5,12 @@ const Products = require('../models/product_model')
 // Create new category
 async function createCategory(req,res){
     try {
-        const {_id} = req.user
+        const {id} = req.user
         const {name , description} = req.body
 
         if (!name) return res.status(400).json({success: false, message: `Please provide required field`}) 
 
-        const newCategory = new CategoryModel({name , description, user_id: _id})
+        const newCategory = new CategoryModel({name , description, user_id: id})
         await newCategory.save()
 
         res.status(201).json({success: true, message: 'Category created successfully'})
@@ -22,7 +22,7 @@ async function createCategory(req,res){
 // Delete a category
 async function deleteCategory(req,res){
     try {
-        const {_id} = req.user
+        const {id} = req.user
         const {categoryId} = req.params
         
         if (!categoryId) {
@@ -34,7 +34,7 @@ async function deleteCategory(req,res){
             return res.status(404).json({success: false, message: 'Category not found'})
         }
 
-        if (category.user_id !== _id) {
+        if (category.user_id !== id) {
             return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
         }
 
@@ -55,7 +55,7 @@ async function deleteCategory(req,res){
 //Get all products in a category
 async function getProductsByCategory(req,res){
     try {
-        const categoryId = req.params.id
+        const {categoryId} = req.params
         
         if (!categoryId) {
             return res.status(400).json({success: false, message: 'Please provide category ID'})
@@ -81,7 +81,7 @@ async function getProductsByCategory(req,res){
 //Update a category
 async function updateCategory(req,res){
     try {
-        const {_id} = req.user
+        const {id} = req.user
         const {categoryId} = req.params
         const {name, description} = req.body
 
@@ -109,7 +109,7 @@ async function updateCategory(req,res){
             return res.status(404).json({success: false, message: 'Category not found'})
         }
 
-        if (category.user_id !== _id) {
+        if (category.user_id !== id) {
             return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
         }
 
