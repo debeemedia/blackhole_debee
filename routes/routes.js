@@ -9,11 +9,11 @@ const { userRouter } = require('./user.routes')
 const router = express.Router()
 
 
-router.use('users', userRouter)
+router.use('/users', userRouter)
 router.use('/categories', categoryRouter)
 router.use('/products', productRouter)
 router.use('/reviews', reviewRouter )
-router.use('faqs', faqRouter)
+router.use('/faqs', faqRouter)
 router.use('/orders', orderRouter)
 
 
