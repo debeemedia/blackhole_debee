@@ -4,7 +4,7 @@ const router = express.Router()
 const { getUsers, createUser, updateUser } = require('../controllers/user.controller')
 const { createVendor } = require('../controllers/vendor.controller')
 const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_TOKEN, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET } = require('../lib/page-route')
-const { verifyEmail } = require('../controllers/verify.email.controller')
+const { verifyEmail, sendConfirmationMail } = require('../controllers/verify.email.controller')
 const { issueNewToken } = require('../middleware/issue.token')
 const { login } = require('../controllers/login.controller')
 const { logout } = require('../controllers/logout.controller')
@@ -17,7 +17,7 @@ router.post(ROUTE_USER_REGISTER, createUser)
 router.post(ROUTE_VENDOR_REGISTER, createVendor)
 
 // verify email
-router.get(ROUTE_VERIFY, verifyEmail)
+router.get(ROUTE_VERIFY, verifyEmail, sendConfirmationMail)
 
 //login
 router.post(ROUTE_USER_LOGIN, login)

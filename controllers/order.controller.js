@@ -2,7 +2,7 @@ const OrderModel = require("../models/order.model");
 const validateData = require("../utils/validate");
 const { empty } = require("../utils/helpers");
 
-async function createOrder(req, res) {
+async function createOrder(req, res, next) {
     const user_id = req.user._id;
     const {
         street_address,
