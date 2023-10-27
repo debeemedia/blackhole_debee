@@ -1,8 +1,9 @@
 const User = require("../models/user.model");
-const {empty} = require('../utils/helpers')
+const {empty} = require('../utils/helpers');
+const { sendMail, buildEmailTemplate } = require("../utils/mail");
 
 // function to verify the email
-async function verifyEmail (req, res) {
+async function verifyEmail (req, res, next) {
     try {
         // get email from the query parameter in welcome.message.ejs
         const email = req.query.email
@@ -19,7 +20,10 @@ async function verifyEmail (req, res) {
         // save the changes
         await user.save()
 
-        res.status(200).json({success: true, message: 'User verified successfully'})
+        // pass the user details on to sendConfirmationMail
+        req.confirm_user = user
+        console.log('from verifyEmail:', req.confirm_user);
+        next()
 
     } catch (error) {
         console.log(error.message)
@@ -27,4 +31,20 @@ async function verifyEmail (req, res) {
     }
 }
 
-module.exports = {verifyEmail}
+async function sendConfirmationMail(req, res) {
+    console.log('from sendConfirmationMail:', req.confirm_user);
+    // get the user from verifyEmail middleware
+    const user = req.confirm_user
+    // send a confirmation mail to user on verification
+    const emailOption = {
+        to: user.email,
+        from: "Aphia",
+        subject: "Registration Successful",
+        html: await buildEmailTemplate("confirmation.ejs", user),
+      };
+      await sendMail(emailOption, res);
+
+      res.status(200).json({success: true, message: 'User verified successfully'})
+}
+
+module.exports = {verifyEmail, sendConfirmationMail}
