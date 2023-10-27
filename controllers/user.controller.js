@@ -34,7 +34,7 @@ async function createUser(req, res) {
 
   const validateResult = validateData(req.body, validateRule, validateMessage);
   if (!validateResult.success) {
-    return res.json(validateResult.data);
+    return res.status(400).json(validateResult.data);
   }
 
   try {
@@ -69,7 +69,7 @@ async function createUser(req, res) {
 
       res
         .status(201)
-        .json({ success: true, message: "user created succesfully" });
+        .json({ success: true, message: "user created successfully" });
     }
   } catch (error) {
     console.error(error);
