@@ -13,7 +13,7 @@ const mongoURL = process.env.MONGODB_URL || 'please enter your mongo db connecti
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 app.get(ROUTE_HOME, async(req, res)=>{
-    return res.send('You are on your way to building one of the most beautiful things the world has even seen.')
+    return res.send('You are on your way to building one of the most beautiful things the world has ever seen.')
 })
 app.set('views', './views')
 app.set('view engine', 'ejs')
