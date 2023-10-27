@@ -1,6 +1,6 @@
 
 const CategoryModel = require('../models/category.model')
-const Products = require('../models/product_model')
+const Products = require('../models/product.model')
 
 // Create new category
 async function createCategory(req,res){
