@@ -12,7 +12,7 @@ async function createOrder(req, res) {
         phone_number,
         alternate_phone_number,
         products,
-        delivery_date
+        amount
     } = req.body;
 
     const validationRule = {
@@ -48,14 +48,20 @@ async function createOrder(req, res) {
             phone_number,
             alternate_phone_number,
             products,
-            delivery_date})
+            amount,
+            currency,
+            order_date,
+            delivery_date,
+            tx_ref})
 
             await newOrder.save()
 
-            res.status(201).json({success: true, message: 'Order created successfully'})
+            // res.status(201).json({success: true, message: 'Order created successfully'})
+            req.order = newOrder
+            next()
 
     } catch (error) {
-        res.status(500).json({success: false, error: error.message});
+        return res.status(500).json({success: false, error: error.message});
     }
 }
 

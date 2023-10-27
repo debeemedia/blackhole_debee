@@ -49,10 +49,11 @@ async function createVendor(req, res) {
   }
 
   try {
-    const emailExist = await VendorModel.findOne({ email }) || await UserModel.findOne({email});
+    // vendor is an extension of user so we check the user model for existing email or username
+    const existing = await UserModel.findOne({$or: [{email}, {username}]})
 
-    if (!empty(emailExist)) {
-      res.status(400).json({ success: false, message: "email already exists" });
+    if (!empty(existing)) {
+      res.status(400).json({ success: false, message: "email or username already exists" });
     } else {
       const newVendor = new VendorModel({
         username,

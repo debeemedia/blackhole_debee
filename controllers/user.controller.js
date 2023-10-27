@@ -1,6 +1,4 @@
 const UserModel = require("../models/user.model");
-const User = require("../models/user.model");
-const VendorModel = require("../models/vendor.model");
 const { empty } = require("../utils/helpers");
 const { sendMail, buildEmailTemplate } = require("../utils/mail");
 const validateData = require("../utils/validate");
@@ -40,12 +38,12 @@ async function createUser(req, res) {
   }
 
   try {
-    const emailExist = await User.findOne({ email: email }) || await VendorModel.findOne({email});
+    const existing = await UserModel.findOne({$or: [{email}, {username}]})
 
-    if (!empty(emailExist)) {
-      res.status(400).json({ success: false, message: "email already exists" });
+    if (!empty(existing)) {
+      res.status(400).json({ success: false, message: "email or username already exists" });
     } else {
-      const newUser = new User({
+      const newUser = new UserModel({
         username,
         email,
         password,
@@ -80,7 +78,7 @@ async function createUser(req, res) {
 }
 async function getUsers(req, res) {
   try {
-    const users = await User.find();
+    const users = await UserModel.find();
     res.status(200).json({ success: true, message: users });
   } catch (error) {
     res.status(500).json(error);
