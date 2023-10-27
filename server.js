@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const router = require('./routes')
+const router = require('./routes/routes')
 const connectToMongoDB = require('./db/connect')
 const { ROUTE_HOME } = require('./lib/page-route')
 const path = require('path')

@@ -39,7 +39,6 @@ async function generateToken(req,res){
   
 }
     
-
  async function resetPassword (req, res){
   const {password } = req.body
   const email = req.query.email
@@ -72,6 +71,7 @@ async function generateToken(req,res){
 
  }
   
-module.exports={generateToken,
-resetPassword
+module.exports={
+  generateToken,
+  resetPassword
 }
