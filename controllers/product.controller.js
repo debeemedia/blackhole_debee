@@ -45,8 +45,8 @@ async function getProducts (req, res) {
 // function to get a product by id
 async function getProductById (req, res) {
     try {
-        const {product_id} = req.params
-        const product = await Product.findById(product_id, '-__v')
+        const {productId} = req.params
+        const product = await Product.findById(productId, '-__v')
         // check if product exists
         if (!product) {
             return res.status(404).json({success: false, message: 'Product not found'})
@@ -62,13 +62,13 @@ async function getProductById (req, res) {
 // UPDATE
 async function updateProduct (req, res) {
     try {
-        const {product_id} = req.params
-        const product = await Product.findById(product_id)
+        const {productId} = req.params
+        const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
             return res.status(404).json({success: false, message: 'Product not found'})
         }
-        const updatedProduct = await Product.findByIdAndUpdate(product_id, req.body, {new: true})
+        const updatedProduct = await Product.findByIdAndUpdate(productId, req.body, {new: true})
         res.status(200).json({success: false, product: updatedProduct})
 
     } catch (error) {
@@ -80,13 +80,13 @@ async function updateProduct (req, res) {
 // DELETE
 async function deleteProduct (req, res) {
     try {
-        const {product_id} = req.params
-        const product = await Product.findById(product_id)
+        const {productId} = req.params
+        const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
             return res.status(404).json({success: false, message: 'Product not found'})
         }
-        await Product.findByIdAndDelete(product_id)
+        await Product.findByIdAndDelete(productId)
         res.status(200).json({success: true, message: 'Product deleted successfully'})
 
     } catch (error) {

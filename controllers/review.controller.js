@@ -6,7 +6,7 @@ const UserModel = require('../models/user.model')
 
 async function addReview(req,res){
     try {
-        const {_id} = req.user
+        const {id} = req.user
         const productId = req.params.id
         const {comment, rating} = req.body
 
@@ -19,7 +19,7 @@ async function addReview(req,res){
             return res.status(404).json({success: false, message: 'Product not found'})
         }
 
-        const newReview = new ReviewModel({product_id: productId, user_id: _id, comment, rating})
+        const newReview = new ReviewModel({product_id: productId, user_id: id, comment, rating})
         await newReview.save()
 
         res.status(201).json({success: true, message: 'Review added successfully'})
@@ -31,7 +31,7 @@ async function addReview(req,res){
 
 async function getProductReviews(req,res){
     try {
-        const productId = req.params.id
+        const {productId} = req.params
 
         if (!productId) {
             return res.status(400).json({success: false, message: 'Please provide product ID'})
@@ -65,15 +65,14 @@ async function getProductReviews(req,res){
 
 async function updateReview(req,res){
     try {
-        const {_id} = req.user
-        const reviewId = req.params.id
+        const {id} = req.user
+        const {reviewId} = req.params
         const {comment, rating} = req.body
 
         if (!comment && !rating) {
             return res.status(400).json({success: false, message: 'Please provide at least a field'})
         }
 
-        
         if (!reviewId) {
             return res.status(400).json({success: false, message: 'Please provide review ID'})
         }
@@ -83,7 +82,7 @@ async function updateReview(req,res){
             return res.status(404).json({success: false, message: 'Review not found'})
         }
 
-        if (review.user_id !== _id) {
+        if (review.user_id !== id) {
             return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
         }
         
@@ -108,8 +107,8 @@ async function updateReview(req,res){
 
 async function deleteReview(req,res){
     try {
-        const {_id} = req.user
-        const reviewId = req.params.id
+        const {id} = req.user
+        const {reviewId} = req.params
         
         if (!reviewId) {
             return res.status(400).json({success: false, message: 'Please provide review ID'})
@@ -120,7 +119,7 @@ async function deleteReview(req,res){
             return res.status(404).json({success: false, message: 'Review not found'})
         }
 
-        if (review.user_id !== _id) {
+        if (review.user_id !== id) {
             return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
         }
 
