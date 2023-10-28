@@ -9,6 +9,10 @@ const categorySchema = new mongoose.Schema({
     },
     description: {
         type: String
+    },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 })
 
@@ -18,4 +22,5 @@ categorySchema.pre('findByIdAndDelete', async function (next) {
     next()
 })
 
-module.exports.CategoryModel = mongoose.model('Category', categorySchema)
+const CategoryModel = mongoose.model('Categories', categorySchema)
+module.exports = CategoryModel
