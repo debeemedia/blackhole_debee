@@ -24,9 +24,9 @@ async function login (req, res) {
                 }
 
                 // issue access token
-                const accessToken = jwt.sign({id: user._id, email: user.email, username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'})
+                const accessToken = jwt.sign({id: user._id, email: user.email, username: user.username, role: user.role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'})
                 // issue refresh token
-                const refreshToken = jwt.sign({id: user._id, email: user.email, username: user.username}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1h'})
+                const refreshToken = jwt.sign({id: user._id, email: user.email, username: user.username, role: user.role}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1h'})
                 // set refresh token in cookie
                 res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'None', secure: true, maxAge: 60 * 60 * 1000})
 
