@@ -6,7 +6,7 @@ async function authenticate (req, res, next) {
         const token = req.headers.authorization
         // check if token is provided
         if (!token) {
-            return res.status(401).json({success: false, message: 'Unauthorized'})
+            return res.status(401).json({success: false, message: 'Unauthorized. Please log in'})
         }
         try {
             const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)

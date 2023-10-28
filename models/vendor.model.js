@@ -21,7 +21,11 @@ const vendorSchema = new mongoose.Schema({
     account_name: {
         type: String,
         required: true
-    }
+    },
+    product_ids: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }]
 })
 
 const VendorModel = UserModel.discriminator('Vendor', vendorSchema)
