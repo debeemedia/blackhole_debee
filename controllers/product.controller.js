@@ -1,3 +1,4 @@
+const Category = require("../models/category.model")
 const Product = require("../models/product.model")
 
 // CREATE
@@ -5,9 +6,9 @@ async function createProduct (req, res) {
     try {
         const user_id = req.user.id
         // destructure request body
-        const {name, description, price, image, category, quantity} = req.body
+        const {name, description, price, image, categoryName, quantity} = req.body
         // validate input
-        if (!name || !description || !price || !image || !category) {
+        if (!name || !description || !price || !image || !categoryName) {
             return res.status(400).json({success: false, message: 'Please provide all required fields'})
         }
         // check if product exists
@@ -15,9 +16,14 @@ async function createProduct (req, res) {
         if (existingProduct) {
             return res.status(400).json({success: false, message: 'Product with this name already exists'})
         }
+
+        // find the category and get the id of the selected category
+        const category = await Category.findOne({categoryName})
+        const category_id = category._id
+
         // create new product and save to database
         const newProduct = new Product({
-            user_id, name, description, price, image, category, quantity
+            user_id, name, description, price, image, category_id, quantity
         })
         const savedProduct = await newProduct.save()
 

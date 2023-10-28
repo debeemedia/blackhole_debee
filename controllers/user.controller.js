@@ -89,7 +89,6 @@ async function updateUser(req, res) {
     const { username, email, password, first_name, last_name, phone_number, image, gender } =req.body;
     // get the user id from the decoded user in jwt
     const userId = req.user.id;
-    console.log(userId);
     if(empty(userId)){
         return res.status(404).json({success: false, message: 'Something went wrong. Please try again'})
     }
@@ -105,7 +104,7 @@ async function updateUser(req, res) {
 
     await user.save();
 
-    res.status(200).json({ success: true, message: "user updated succesfully" });
+    res.status(200).json({ success: true, message: "user updated successfully" });
 }
 
 module.exports = {

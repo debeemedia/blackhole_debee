@@ -21,6 +21,7 @@ async function createVendor(req, res) {
     security_answer,
     image,
     gender,
+    product_ids
   } = req.body;
   const error = {};
   const validateRule = {
@@ -72,6 +73,7 @@ async function createVendor(req, res) {
         security_answer,
         image,
         gender,
+        product_ids
       });
       await newVendor.save();
 
@@ -86,7 +88,7 @@ async function createVendor(req, res) {
 
       res
         .status(201)
-        .json({ success: true, message: "vendor created succesfully" });
+        .json({ success: true, message: "vendor created successfully" });
     }
   } catch (error) {
     console.error(error);
