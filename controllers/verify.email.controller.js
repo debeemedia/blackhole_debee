@@ -22,7 +22,6 @@ async function verifyEmail (req, res, next) {
 
         // pass the user details on to sendConfirmationMail
         req.confirm_user = user
-        console.log('from verifyEmail:', req.confirm_user);
         next()
 
     } catch (error) {
@@ -32,7 +31,6 @@ async function verifyEmail (req, res, next) {
 }
 
 async function sendConfirmationMail(req, res) {
-    console.log('from sendConfirmationMail:', req.confirm_user);
     // get the user from verifyEmail middleware
     const user = req.confirm_user
     // send a confirmation mail to user on verification

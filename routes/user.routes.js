@@ -8,6 +8,7 @@ const { verifyEmail, sendConfirmationMail } = require('../controllers/verify.ema
 const { issueNewToken } = require('../middleware/issue.token')
 const { login } = require('../controllers/login.controller')
 const { logout } = require('../controllers/logout.controller')
+const { authenticate } = require('../middleware/auth')
 
 //register as a user 
 // router.route(ROUTE_HOME).get(getUsers)
@@ -22,6 +23,9 @@ router.get(ROUTE_VERIFY, verifyEmail, sendConfirmationMail)
 //login
 router.post(ROUTE_USER_LOGIN, login)
 
+// route to issue new access token
+router.post(ROUTE_TOKEN, issueNewToken)
+
 // get all users
 router.get(ROUTE_USERS_GET, getUsers)
 
@@ -29,12 +33,6 @@ router.get(ROUTE_USERS_GET, getUsers)
 router.get(ROUTE_USER_LOGOUT, logout)
 
 // update user details
-router.put(ROUTE_USER_UPDATE, updateUser)
-
-// route to issue new access token
-router.post(ROUTE_TOKEN, issueNewToken)
-
-//
-
+router.put(ROUTE_USER_UPDATE, authenticate, updateUser)
 
 module.exports.userRouter = router
