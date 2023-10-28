@@ -4,7 +4,7 @@ const productSchema = new mongoose.Schema(
     {
         user_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'Vendor',
             required: true
         },
         name: {
@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema(
             max: 5,
             default: 'https://pic.onlinewebfonts.com/thumbnails/icons_90947.svg'
         },
-        category: {
+        category_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category',
             required: true

@@ -12,7 +12,7 @@ async function issueNewToken (req, res) {
                     return res.status(401).json({success: false, message: 'Unauthorized'})
                 } else {
                     // issue a new access token
-                    const accessToken = jwt.sign({id: decoded.id, email: decoded.email, username: decoded.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'})
+                    const accessToken = jwt.sign({id: decoded.id, email: decoded.email, username: decoded.username, role: decoded.role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'})
                     
                     return res.status(200).json({success: true, accessToken})
                 }

@@ -4,6 +4,7 @@ const { createProduct, getProducts, getProductById, updateProduct, deleteProduct
 const { checkVendor } = require('../middleware/check.vendor')
 const { checkVendorOwnership } = require('../middleware/check.vendor.ownership')
 const { ROUTE_PRODUCT_CREATE, ROUTE_GET_PRODUCT, ROUTE_PRODUCT_GET_ALL, ROUTE_PRODUCT_UPDATE, ROUTE_PRODUCT_DELETE } = require('../lib/page-route')
+const { authenticate } = require('../middleware/auth')
 
 // create the router
 const productRouter = express.Router()
@@ -11,7 +12,7 @@ const productRouter = express.Router()
 // routes
 
 // POST/CREATE
-productRouter.post(ROUTE_PRODUCT_CREATE, checkVendor, createProduct) // create a product
+productRouter.post(ROUTE_PRODUCT_CREATE, authenticate, checkVendor, createProduct) // create a product
 
 // GET/READ
 productRouter.get(ROUTE_PRODUCT_GET_ALL, getProducts) // get all products
