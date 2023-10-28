@@ -10,7 +10,7 @@ async function createCategory(req,res){
 
         if (!name) return res.status(400).json({success: false, message: `Please provide required field`}) 
 
-        const newCategory = new CategoryModel({name , description, user_id: id})
+        const newCategory = new CategoryModel({name, description, user_id: id})
         await newCategory.save()
 
         res.status(201).json({success: true, message: 'Category created successfully'})
