@@ -86,20 +86,25 @@ async function getUsers(req, res) {
 }
 
 async function updateUser(req, res) {
-    const { username, email, password, first_name, last_name, image, gender } =req.body;
-    const {userId} = req.user.id;
+    const { username, email, password, first_name, last_name, phone_number, image, gender } =req.body;
+    // get the user id from the decoded user in jwt
+    const userId = req.user.id;
+    console.log(userId);
     if(empty(userId)){
         return res.status(404).json({success: false, message: 'Something went wrong. Please try again'})
     }
     const user = await UserModel.findById(userId);
-    if (!(empty(username))) user.username = username;
+    if (!empty(username)) user.username = username;
     if (!empty(email)) user.email = email;
     if (!empty(password)) user.password = password;
     if (!empty(first_name)) user.first_name = first_name;
     if (!empty(last_name)) user.last_name = last_name;
+    if (!empty(phone_number)) user.phone_number = phone_number;
     if (!empty(image)) user.image = image;
     if (!empty(gender)) user.gender = gender;
+
     await user.save();
+
     res.status(200).json({ success: true, message: "user updated succesfully" });
 }
 
