@@ -87,12 +87,12 @@ async function getUsers(req, res) {
 
 async function updateUser(req, res) {
     const { username, email, password, first_name, last_name, image, gender } =req.body;
-    const {userId} = req.user;
+    const {userId} = req.user.id;
     if(empty(userId)){
         return res.status(404).json({success: false, message: 'Something went wrong. Please try again'})
     }
     const user = await UserModel.findById(userId);
-    if (!empty(username)) user.username = username;
+    if (!(empty(username))) user.username = username;
     if (!empty(email)) user.email = email;
     if (!empty(password)) user.password = password;
     if (!empty(first_name)) user.first_name = first_name;
