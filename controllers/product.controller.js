@@ -1,33 +1,73 @@
-const Category = require("../models/category.model")
+const CategoryModel = require("../models/category.model")
 const Product = require("../models/product.model")
+const { empty } = require("../utils/helpers");
+const validateData = require("../utils/validate");
+
 
 // CREATE
 async function createProduct (req, res) {
     try {
+        // get the id of the logged-in vendor
         const user_id = req.user.id
+
         // destructure request body
-        const {name, description, price, image, categoryName, quantity} = req.body
+        const {
+            name,
+            description,
+            price,
+            image,
+            category_name,
+            quantity
+          } = req.body;
+          
         // validate input
-        if (!name || !description || !price || !image || !categoryName) {
-            return res.status(400).json({success: false, message: 'Please provide all required fields'})
-        }
-        // check if product exists
-        const existingProduct = await Product.findOne({name})
-        if (existingProduct) {
-            return res.status(400).json({success: false, message: 'Product with this name already exists'})
+        const error = {};
+        const validateRule = {
+            name: "string|required",
+            description: "string|required",
+            price: "required",
+            image: "string|min:1",
+            category_name: "string|required",
+            quantity: "min:1"
+        };
+        const validateMessage = {
+            required: ":attribute is required",
+            string: ":attribute must be a string"
+            // number: ":attribute must be a number"
+        };
+        const validateResult = validateData(req.body, validateRule, validateMessage);
+        if (!validateResult.success) {
+            return res.status(400).json(validateResult.data);
         }
 
-        // find the category and get the id of the selected category
-        const category = await Category.findOne({categoryName})
-        const category_id = category._id
+        // check if category exists
+        // const categoryExists = await CategoryModel.findOne({category_name})
+        // if (empty(categoryExists)) {
+        //     return res.status(404).json({ success: false, message: "Category not found" });
+        // }
+
+        // // check if vendor already of same name
+        // const existingProduct = await Product.findOne({name})
+        // if (existingProduct.user_id == user_id) {
+        //     return res.status(400).json({success: false, message: "You already have a product with same name"})
+        // }
+
 
         // create new product and save to database
         const newProduct = new Product({
-            user_id, name, description, price, image, category_id, quantity
-        })
-        const savedProduct = await newProduct.save()
+            user_id,
+            name,
+            description,
+            price,
+            image,
+            category_name,
+            //   category_id,
+            quantity
+        });
 
-        res.status(201).json({success: true, message: 'Product created successfully', product: savedProduct})
+        await newProduct.save();
+
+        res.status(201).json({success: true, message: 'Product created successfully', product: newProduct})
 
     } catch (error) {
         console.log(error.message)

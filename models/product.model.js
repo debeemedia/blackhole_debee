@@ -26,11 +26,15 @@ const productSchema = new mongoose.Schema(
             max: 5,
             default: 'https://pic.onlinewebfonts.com/thumbnails/icons_90947.svg'
         },
-        category_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Category',
+        category_name: {
+            type: String,
             required: true
         },
+        // category_id: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: 'Category',
+        //     required: true
+        // },
         quantity: {
             type: Number,
             default: 1
