@@ -1,9 +1,9 @@
 
 const express = require('express')
 const router = express.Router()
-const { getUsers, createUser, updateUser } = require('../controllers/user.controller')
+const { getUsers, createUser, updateUser, deleteUser } = require('../controllers/user.controller')
 const { createVendor } = require('../controllers/vendor.controller')
-const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_TOKEN, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET } = require('../lib/page-route')
+const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_TOKEN, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET, ROUTE_USER_DELETE } = require('../lib/page-route')
 const { verifyEmail, sendConfirmationMail } = require('../controllers/verify.email.controller')
 const { issueNewToken } = require('../middleware/issue.token')
 const { login } = require('../controllers/login.controller')
@@ -34,5 +34,7 @@ router.get(ROUTE_USER_LOGOUT, logout)
 
 // update user details
 router.put(ROUTE_USER_UPDATE, authenticate, updateUser)
+
+router.delete(ROUTE_USER_DELETE, authenticate, deleteUser)
 
 module.exports.userRouter = router
