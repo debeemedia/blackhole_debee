@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const router = require('./routes/routes')
 const connectToMongoDB = require('./db/connect')
@@ -11,6 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 const PORT = process.env.PORT || 5000
 const mongoURL = process.env.MONGODB_URL || 'please enter your mongo db connection string in the created .env file'
 
+app.use(cors())
 app.use(cookieParser())
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())

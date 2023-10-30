@@ -15,7 +15,7 @@ async function authenticate (req, res, next) {
 
         } catch (error) {
             console.log(error.message);
-            return res.status(401).json({success: false, message: error.message})
+            return res.status(401).json({success: false, message: "Invalid token"})
         }
     } catch (error) {
         console.log(error.message);

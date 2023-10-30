@@ -38,11 +38,14 @@ async function createUser(req, res) {
   }
 
   try {
-    const existing = await UserModel.findOne({$or: [{email}, {username}]})
+    const existingEmail = await UserModel.findOne({email})
+    const existingUsername = await UserModel.findOne({username})
 
-    if (!empty(existing)) {
-      res.status(400).json({ success: false, message: "email or username already exists" });
-    } else {
+    if (!empty(existingEmail)) {
+      res.status(400).json({ success: false, message: "User with email address exists" });
+    } else if (!empty(existingUsername)) {
+      res.status(400).json({ success: false, message: "Username already taken" });
+    }else {
       const newUser = new UserModel({
         username,
         email,
@@ -107,8 +110,25 @@ async function updateUser(req, res) {
     res.status(200).json({ success: true, message: "user updated successfully" });
 }
 
+async function deleteUser(req, res) {
+  try {
+    // get the user id from the decoded user in jwt
+  const userId = req.user.id;
+  if(empty(userId)){
+      return res.status(404).json({success: false, message: 'Something went wrong. Please try again'})
+  }
+  
+  await UserModel.findByIdAndDelete(userId)
+
+  res.status(200).json({ success: true, message: "user deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal Server error" });
+  }
+}
+
 module.exports = {
   createUser,
   getUsers,
   updateUser,
+  deleteUser
 };
