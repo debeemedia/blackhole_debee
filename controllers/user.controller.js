@@ -33,7 +33,7 @@ async function createUser(req, res) {
 
   const validateResult = validateData(req.body, validateRule, validateMessage);
   if (!validateResult.success) {
-    return res.status(400).json(validateResult.data);
+    return res.json(validateResult.data);
   }
 
   try {
@@ -41,9 +41,9 @@ async function createUser(req, res) {
     const existingUsername = await UserModel.findOne({username})
 
     if (!empty(existingEmail)) {
-      res.status(400).json({ success: false, message: "User with email address exists" });
+      res.json({ success: false, message: "User with email address exists" });
     } else if (!empty(existingUsername)) {
-      res.status(400).json({ success: false, message: "Username already taken" });
+      res.json({ success: false, message: "Username already taken" });
     }else {
       // access the uploaded file URL from req.file (uploaded by multer)
       const image_default_url = 'https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
@@ -74,20 +74,19 @@ async function createUser(req, res) {
       await sendMail(emailOption, res);
 
       res
-        .status(201)
         .json({ success: true, message: "user created successfully" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "internal server error" });
+    res.json({ success: false, message: "internal server error" });
   }
 }
 async function getUsers(req, res) {
   try {
     const users = await UserModel.find();
-    res.status(200).json({ success: true, message: users });
+    res.json({ success: true, message: users });
   } catch (error) {
-    res.status(500).json(error);
+    res.json(error);
   }
 }
 
@@ -96,7 +95,7 @@ async function updateUser(req, res) {
     // get the user id from the decoded user in jwt
     const userId = req.user.id;
     if(empty(userId)){
-        return res.status(404).json({success: false, message: 'Something went wrong. Please try again'})
+        return res.json({success: false, message: 'Something went wrong. Please try again'})
     }
     const user = await UserModel.findById(userId);
     if (!empty(username)) user.username = username;
@@ -110,7 +109,7 @@ async function updateUser(req, res) {
 
     await user.save();
 
-    res.status(200).json({ success: true, message: "user updated successfully" });
+    res.json({ success: true, message: "user updated successfully" });
 }
 
 async function deleteUser(req, res) {
@@ -118,14 +117,14 @@ async function deleteUser(req, res) {
     // get the user id from the decoded user in jwt
   const userId = req.user.id;
   if(empty(userId)){
-      return res.status(404).json({success: false, message: 'Something went wrong. Please try again'})
+      return res.json({success: false, message: 'Something went wrong. Please try again'})
   }
   
   await UserModel.findByIdAndDelete(userId)
 
-  res.status(200).json({ success: true, message: "user deleted successfully" });
+  res.json({ success: true, message: "user deleted successfully" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal Server error" });
+    res.json({ success: false, message: "Internal Server error" });
   }
 }
 

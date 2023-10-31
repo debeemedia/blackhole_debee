@@ -6,7 +6,7 @@ async function authenticate (req, res, next) {
         const token = req.headers.authorization
         // check if token is provided
         if (!token) {
-            return res.status(401).json({success: false, message: 'Unauthorized. Please log in'})
+            return res.json({success: false, message: 'Unauthorized. Please log in'})
         }
         try {
             const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
@@ -15,11 +15,11 @@ async function authenticate (req, res, next) {
 
         } catch (error) {
             console.log(error.message);
-            return res.status(401).json({success: false, message: "Invalid token"})
+            return res.json({success: false, message: "Invalid token"})
         }
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({success: false, message: 'Internal Server Error'})
+        res.json({success: false, message: 'Internal Server Error'})
     }
 }
 

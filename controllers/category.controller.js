@@ -8,14 +8,14 @@ async function createCategory(req,res){
         const {id} = req.user
         const {name , description} = req.body
 
-        if (!name) return res.status(400).json({success: false, message: `Please provide required field`}) 
+        if (!name) return res.json({success: false, message: `Please provide required field`}) 
 
         const newCategory = new CategoryModel({name, description, user_id: id})
         await newCategory.save()
 
-        res.status(201).json({success: true, message: 'Category created successfully'})
+        res.json({success: true, message: 'Category created successfully'})
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 
@@ -26,29 +26,29 @@ async function deleteCategory(req,res){
         const {categoryId} = req.params
         
         if (!categoryId) {
-            return res.status(400).json({success: false, message: 'Please provide category ID'})
+            return res.json({success: false, message: 'Please provide category ID'})
         }
         
         const category = await CategoryModel.findById(categoryId)
         if (!category) {
-            return res.status(404).json({success: false, message: 'Category not found'})
+            return res.json({success: false, message: 'Category not found'})
         }
 
         if (category.user_id !== id) {
-            return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
+            return res.json({success: false, message: 'You are not authorized to perform this action'})
         }
 
         const products = Products.find({category: categoryId})
         if (products.length == 0) {
-            return res.status(404).json({success: false, message: 'No product found in this category'})
+            return res.json({success: false, message: 'No product found in this category'})
         }
 
         const deletedCategory = CategoryModel.findByIdAndDelete(categoryId)
         
-        res.status(200).json({success: true, message: 'Category deleted successfully'})
+        res.json({success: true, message: 'Category deleted successfully'})
       
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 
@@ -58,23 +58,23 @@ async function getProductsByCategory(req,res){
         const {categoryId} = req.params
         
         if (!categoryId) {
-            return res.status(400).json({success: false, message: 'Please provide category ID'})
+            return res.json({success: false, message: 'Please provide category ID'})
         }
         
         const category = await CategoryModel.findById(categoryId)
         if (!category) {
-            return res.status(404).json({success: false, message: 'Category not found'})
+            return res.json({success: false, message: 'Category not found'})
         }
 
         const products = Products.find({category: categoryId}).select('-__v')
         if (products.length == 0) {
-            return res.status(404).json({success: false, message: 'No product found in this category'})
+            return res.json({success: false, message: 'No product found in this category'})
         }
         
-        res.status(200).json({success: true, message: products})
+        res.json({success: true, message: products})
       
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 
@@ -86,7 +86,7 @@ async function updateCategory(req,res){
         const {name, description} = req.body
 
         if (!name && !description) {
-            return res.status(400).json({success: false, message: 'Please provide at least one field'})
+            return res.json({success: false, message: 'Please provide at least one field'})
         }
 
         const updateDetails = {}
@@ -101,24 +101,24 @@ async function updateCategory(req,res){
         }
         
         if (!categoryId) {
-            return res.status(400).json({success: false, message: 'Please provide category ID'})
+            return res.json({success: false, message: 'Please provide category ID'})
         }
         
         const category = await CategoryModel.findById(categoryId)
         if (!category) {
-            return res.status(404).json({success: false, message: 'Category not found'})
+            return res.json({success: false, message: 'Category not found'})
         }
 
         if (category.user_id !== id) {
-            return res.status(401).json({success: false, message: 'You are not authorized to perform this action'})
+            return res.json({success: false, message: 'You are not authorized to perform this action'})
         }
 
         const updatedCategory = CategoryModel.findByIdAndUpdate(categoryId , updateDetails , {new: true})
         
-        res.status(200).json({success: true, message: 'Category updated successfully'})
+        res.json({success: true, message: 'Category updated successfully'})
       
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 
@@ -127,12 +127,12 @@ async function getAllCategories(req,res) {
         const categories = await CategoryModel.find().select('-__v')
 
         if (categories.length == 0) {
-            return res.status(404).json({success: false, message: `No category found`})
+            return res.json({success: false, message: `No category found`})
         }
 
-        res.status(200).json({success: true, message: categories})
+        res.json({success: true, message: categories})
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})   
+        res.json({success: false, error: error.message})   
     }
 }
 

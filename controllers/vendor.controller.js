@@ -46,7 +46,7 @@ async function createVendor(req, res) {
 
   const validateResult = validateData(req.body, validateRule, validateMessage);
   if (!validateResult.success) {
-    return res.status(400).json(validateResult.data);
+    return res.json(validateResult.data);
   }
 
   try {
@@ -55,9 +55,9 @@ async function createVendor(req, res) {
     const existingUsername = await UserModel.findOne({username})
 
     if (!empty(existingEmail)) {
-      res.status(400).json({ success: false, message: "Vendor with email address exists" });
+      res.json({ success: false, message: "Vendor with email address exists" });
     } else if (!empty(existingUsername)) {
-      res.status(400).json({ success: false, message: "Username already taken" });
+      res.json({ success: false, message: "Username already taken" });
     } else {
       const newVendor = new VendorModel({
         username,
@@ -90,12 +90,11 @@ async function createVendor(req, res) {
       await sendMail(emailOption, res);
 
       res
-        .status(201)
         .json({ success: true, message: "vendor created successfully" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "internal server error" });
+    res.json({ success: false, message: "internal server error" });
   }
 }
 

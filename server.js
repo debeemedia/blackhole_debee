@@ -26,7 +26,7 @@ app.use('/api', router)
 // Error handling middleware
 app.use((err, req, res, next) => {
     if (err) {
-      res.status(400).json({ success: false, message: err.message });
+      res.json({ success: false, message: err.message });
     }
     next();
 });

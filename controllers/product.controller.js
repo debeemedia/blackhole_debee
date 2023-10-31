@@ -16,7 +16,7 @@ async function createProduct (req, res) {
             description,
             price,
             image,
-            category_name,
+            category_id,
             quantity
           } = req.body;
           
@@ -27,7 +27,7 @@ async function createProduct (req, res) {
             description: "string|required",
             price: "required",
             image: "string|min:1",
-            category_name: "string|required",
+            category_id: "required",
             quantity: "min:1"
         };
         const validateMessage = {
@@ -37,21 +37,22 @@ async function createProduct (req, res) {
         };
         const validateResult = validateData(req.body, validateRule, validateMessage);
         if (!validateResult.success) {
-            return res.status(400).json(validateResult.data);
+            return res.json(validateResult.data);
         }
 
         // check if category exists
-        // const categoryExists = await CategoryModel.findOne({category_name})
-        // if (empty(categoryExists)) {
-        //     return res.status(404).json({ success: false, message: "Category not found" });
-        // }
+        const categoryExists = await CategoryModel.findById(category_id)
+        if (empty(categoryExists)) {
+            return res.json({ success: false, message: "Category not found" });
+        }
 
-        // // check if vendor already of same name
-        // const existingProduct = await Product.findOne({name})
+        // // check if vendor already has a product of the same name
+        // const existingProduct = await Product.findOne({ name : { $regex: name, $options: 'i' }})
+        // console.log(Product);
+        // console.log(existingProduct);
         // if (existingProduct.user_id == user_id) {
-        //     return res.status(400).json({success: false, message: "You already have a product with same name"})
+        //     return res.json({success: false, message: "You already have a product with same name"})
         // }
-
 
         // create new product and save to database
         const newProduct = new Product({
@@ -60,18 +61,17 @@ async function createProduct (req, res) {
             description,
             price,
             image,
-            category_name,
-            //   category_id,
+            category_id,
             quantity
         });
 
         await newProduct.save();
 
-        res.status(201).json({success: true, message: 'Product created successfully', product: newProduct})
+        res.json({success: true, message: 'Product created successfully', product: newProduct})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 
@@ -81,10 +81,10 @@ async function createProduct (req, res) {
 async function getProducts (req, res) {
     try {
         const products = await Product.find().select('-__v')
-        res.status(200).json({success: true, products})
+        res.json({success: true, products})
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 
@@ -95,13 +95,13 @@ async function getProductById (req, res) {
         const product = await Product.findById(productId, '-__v')
         // check if product exists
         if (!product) {
-            return res.status(404).json({success: false, message: 'Product not found'})
+            return res.json({success: false, message: 'Product not found'})
         }
-        res.status.json(200).json({success: true, product})
+        res.json({success: true, product})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 
@@ -112,14 +112,14 @@ async function updateProduct (req, res) {
         const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
-            return res.status(404).json({success: false, message: 'Product not found'})
+            return res.json({success: false, message: 'Product not found'})
         }
         const updatedProduct = await Product.findByIdAndUpdate(productId, req.body, {new: true})
-        res.status(200).json({success: false, product: updatedProduct})
+        res.json({success: false, product: updatedProduct})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 
@@ -130,14 +130,14 @@ async function deleteProduct (req, res) {
         const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
-            return res.status(404).json({success: false, message: 'Product not found'})
+            return res.json({success: false, message: 'Product not found'})
         }
         await Product.findByIdAndDelete(productId)
-        res.status(200).json({success: true, message: 'Product deleted successfully'})
+        res.json({success: true, message: 'Product deleted successfully'})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 

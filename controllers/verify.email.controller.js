@@ -8,12 +8,12 @@ async function verifyEmail (req, res, next) {
         // get email from the query parameter in welcome.message.ejs
         const email = req.query.email
         if(empty(email)){
-            return res.status(500).json({success: false, message: 'Something went wrong. Try again later'})
+            return res.json({success: false, message: 'Something went wrong. Try again later'})
         }
         // find the user by the email
         const user = await User.findOne({email})
         if (!user) {
-            return res.status(404).json({success: false, message: 'user does not exist'})
+            return res.json({success: false, message: 'user does not exist'})
         }
         // change user's verified status to true
         user.verified = true
@@ -26,7 +26,7 @@ async function verifyEmail (req, res, next) {
 
     } catch (error) {
         console.log(error.message)
-        return res.status(500).json({success: false, message: 'internal server error'})
+        return res.json({success: false, message: 'internal server error'})
     }
 }
 
@@ -42,7 +42,7 @@ async function sendConfirmationMail(req, res) {
       };
       await sendMail(emailOption, res);
 
-      res.status(200).json({success: true, message: 'User verified successfully'})
+      res.json({success: true, message: 'User verified successfully'})
 }
 
 module.exports = {verifyEmail, sendConfirmationMail}
