@@ -34,16 +34,11 @@ async function deleteCategory(req,res){
             return res.json({success: false, message: 'Category not found'})
         }
 
-        if (category.user_id !== id) {
+        if (category.user_id != id) {
             return res.json({success: false, message: 'You are not authorized to perform this action'})
         }
 
-        const products = Products.find({category: categoryId})
-        if (products.length == 0) {
-            return res.json({success: false, message: 'No product found in this category'})
-        }
-
-        const deletedCategory = CategoryModel.findByIdAndDelete(categoryId)
+        const deletedCategory = await CategoryModel.findByIdAndDelete(categoryId)
         
         res.json({success: true, message: 'Category deleted successfully'})
       
@@ -109,11 +104,11 @@ async function updateCategory(req,res){
             return res.json({success: false, message: 'Category not found'})
         }
 
-        if (category.user_id !== id) {
+        if (category.user_id != id) {
             return res.json({success: false, message: 'You are not authorized to perform this action'})
         }
 
-        const updatedCategory = CategoryModel.findByIdAndUpdate(categoryId , updateDetails , {new: true})
+        const updatedCategory = await CategoryModel.findByIdAndUpdate(categoryId , updateDetails , {new: true})
         
         res.json({success: true, message: 'Category updated successfully'})
       
