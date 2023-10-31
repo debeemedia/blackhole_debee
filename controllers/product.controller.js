@@ -46,13 +46,13 @@ async function createProduct (req, res) {
             return res.json({ success: false, message: "Category not found" });
         }
 
-        // // check if vendor already has a product of the same name
-        // const existingProduct = await Product.findOne({ name : { $regex: name, $options: 'i' }})
-        // console.log(Product);
-        // console.log(existingProduct);
-        // if (existingProduct.user_id == user_id) {
-        //     return res.json({success: false, message: "You already have a product with same name"})
-        // }
+        // check if vendor already has a product of the same name
+        const existingProduct = await Product.findOne({ name : { $regex: name, $options: 'i' }}) // regex for case-insensitive search
+        console.log(Product);
+        console.log(existingProduct);
+        if (existingProduct && existingProduct.user_id == user_id) {
+            return res.json({success: false, message: "You already have a product with same name"})
+        }
 
         // create new product and save to database
         const newProduct = new Product({
