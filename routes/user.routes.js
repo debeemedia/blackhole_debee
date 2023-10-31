@@ -9,10 +9,11 @@ const { issueNewToken } = require('../middleware/issue.token')
 const { login } = require('../controllers/login.controller')
 const { logout } = require('../controllers/logout.controller')
 const { authenticate } = require('../middleware/auth')
+const upload = require('../utils/image.upload')
 
 //register as a user 
 // router.route(ROUTE_HOME).get(getUsers)
-router.post(ROUTE_USER_REGISTER, createUser)
+router.post(ROUTE_USER_REGISTER, upload.single('profile_image'), createUser)
 
 //register as a vendor
 router.post(ROUTE_VENDOR_REGISTER, createVendor)

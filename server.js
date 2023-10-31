@@ -23,6 +23,14 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 app.use('/api', router)
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    if (err) {
+      res.status(400).json({ success: false, message: err.message });
+    }
+    next();
+});
+
 app.listen(PORT, async ()=>{
     console.log(`Server running on port ${PORT}`)
     await connectToMongoDB(mongoURL)
