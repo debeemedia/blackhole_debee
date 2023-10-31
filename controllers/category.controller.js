@@ -66,7 +66,7 @@ async function getProductsByCategory(req,res){
             return res.json({success: false, message: 'Category not found'})
         }
 
-        const products = Products.find({category: categoryId}).select('-__v')
+        const products = await Products.find({category_id: categoryId}).select('-__v')
         if (products.length == 0) {
             return res.json({success: false, message: 'No product found in this category'})
         }
