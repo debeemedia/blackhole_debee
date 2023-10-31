@@ -9,20 +9,20 @@ async function issueNewToken (req, res) {
             // verify refresh token
             jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
                 if (err) {
-                    return res.status(401).json({success: false, message: 'Unauthorized'})
+                    return res.json({success: false, message: 'Unauthorized'})
                 } else {
                     // issue a new access token
                     const accessToken = jwt.sign({id: decoded.id, email: decoded.email, username: decoded.username, role: decoded.role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'})
                     
-                    return res.status(200).json({success: true, accessToken})
+                    return res.json({success: true, accessToken})
                 }
             })
         } else {
-            return res.status(401).json({success: false, message: 'Unauthorized'})
+            return res.json({success: false, message: 'Unauthorized'})
         }
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({success: true, message: 'Internal Server Error'})
+        res.json({success: true, message: 'Internal Server Error'})
     
     }
 }

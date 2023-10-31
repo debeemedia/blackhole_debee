@@ -5,16 +5,16 @@ async function addQuestion(req,res) {
     try {
         const {question, answer} = req.body
     if (!question || !answer) {
-        return res.status(400).json({success: false, message: `Please provide all required fields`})
+        return res.json({success: false, message: `Please provide all required fields`})
     }
 
     const newFaq = new FaqModel({question, answer})
     await newFaq.save()
 
-    res.status(201).json({success: true, message: `Question added succssfully`})
+    res.json({success: true, message: `Question added succssfully`})
     
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 
@@ -23,12 +23,12 @@ async function getQuestions(req,res) {
         const questions = await FaqModel.find().select('-__V')
 
         if (questions.length == 0) {
-            return res.status(404).json({success: false, message: `No question found`})
+            return res.json({success: false, message: `No question found`})
         }
 
-        res.status(200).json({success: true, message: questions})
+        res.json({success: true, message: questions})
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 
@@ -38,16 +38,16 @@ async function updateFaq(req,res){
         const {question, answer} = req.body
 
         if (!question && !answer) {
-            return res.status(400).json({success: false, message: 'Please provide at least a field'})
+            return res.json({success: false, message: 'Please provide at least a field'})
         }
         
         if (!faqId) {
-            return res.status(400).json({success: false, message: 'Please provide FAQ ID'})
+            return res.json({success: false, message: 'Please provide FAQ ID'})
         }
         
         const faq = await FaqModel.findById(faqId)
         if (!faq) {
-            return res.status(404).json({success: false, message: 'Question not found'})
+            return res.json({success: false, message: 'Question not found'})
         }
         
         const updateDetails = {}
@@ -61,10 +61,10 @@ async function updateFaq(req,res){
 
         const updatedFaq = FaqModel.findByIdAndUpdate(faqId, updateDetails, {new: true})
         
-        res.status(200).json({success: true, message: 'Question updated successfully'})
+        res.json({success: true, message: 'Question updated successfully'})
       
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 
@@ -73,20 +73,20 @@ async function deleteFaq(req,res){
         const {faqId} = req.params
         
         if (!faqId) {
-            return res.status(400).json({success: false, message: 'Please provide FAQ ID'})
+            return res.json({success: false, message: 'Please provide FAQ ID'})
         }
         
         const faq = await FaqModel.findById(faqId)
         if (!faq) {
-            return res.status(404).json({success: false, message: 'Question not found'})
+            return res.json({success: false, message: 'Question not found'})
         }
 
         const deletedFaq = FaqModel.findByIdAndDelete(faqId)
         
-        res.status(200).json({success: true, message: 'Question deleted successfully'})
+        res.json({success: true, message: 'Question deleted successfully'})
       
     } catch (error) {
-        res.status(500).json({success: false, error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 

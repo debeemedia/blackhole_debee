@@ -8,18 +8,18 @@ async function checkVendorOwnership (req, res) {
         const product = ProductModel.findById(product_id)
         // check if the product exists
         if (!product) {
-            return res.status(404).json({success: false, message: 'Product not found'})
+            return res.json({success: false, message: 'Product not found'})
         }
         // check if the user is the owner of the product
         if (product.user_id == req.user.id) {
             next()
         } else {
-            res.status(403).json({success: false, message: 'Access Denied. You are not the vendor of this product'})
+            res.json({success: false, message: 'Access Denied. You are not the vendor of this product'})
         }
 
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({success: false, message: 'Internal Server Error'})
+        res.json({success: false, message: 'Internal Server Error'})
     }
 }
 

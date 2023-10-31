@@ -17,7 +17,7 @@ async function generateToken(req,res){
     const {email} = req.body
     const user = await UserModel.findOne({email})
     if(!user){
-        return res.status(404).json({success: false, message: 'User not found' })
+        return res.json({success: false, message: 'User not found' })
     }
   const user_id = user._id
   const resetToken = new RecoverModel({
@@ -34,7 +34,7 @@ async function generateToken(req,res){
     html: await buildEmailTemplate('request_password_reset.ejs', {user, token:resetToken.token})
   }
   await sendMail(mailOption)
-  res.status(200).json({succes: true, message: 'token expires in 5minutes, '})
+  res.json({succes: true, message: 'token expires in 5minutes, '})
 
   
 }
@@ -45,21 +45,21 @@ async function generateToken(req,res){
   const token = req.query.token
 
   if (!password) {
-    return res.status(400).json({ success: false, message: 'New password is required' });
+    return res.json({ success: false, message: 'New password is required' });
   }
 
 
   const user = await UserModel.findOne({email});
   if (!user) {
-    return res.status(404).json({success: false, message: 'user not found' });
+    return res.json({success: false, message: 'user not found' });
   }
   const user_id = user._id
   const savedToken = await RecoverModel.findOne({user_id})
   if(!savedToken){
-    return res.status(403).json({success: false, message: 'invalid or expired token' });
+    return res.json({success: false, message: 'invalid or expired token' });
   }
   if(token != savedToken){
-    return res.status(401).json({success: false, message: 'invalid token' });
+    return res.json({success: false, message: 'invalid token' });
   }
   user.password = password;
   await user.save()
@@ -67,7 +67,7 @@ async function generateToken(req,res){
   if(Date.now() > savedToken.expTime){
     await RecoverModel.findByIdAndDelete(savedToken._id)  
   }  
-   res.status(200).json({success: true, message: 'Password reset successfully' })
+   res.json({success: true, message: 'Password reset successfully' })
 
  }
   
