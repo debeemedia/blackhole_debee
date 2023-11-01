@@ -1,11 +1,11 @@
 const ProductModel = require("../models/product.model");
 
-async function checkVendorOwnership (req, res) {
+async function checkVendorOwnership (req, res, next) {
     try {
         // destructure product id from req.params
-        const {product_id} = req.params
+        const {productId} = req.params
         // find the product by id
-        const product = ProductModel.findById(product_id)
+        const product = await ProductModel.findById(productId)
         // check if the product exists
         if (!product) {
             return res.json({success: false, message: 'Product not found'})
