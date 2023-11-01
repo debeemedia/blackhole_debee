@@ -14,7 +14,7 @@ async function issueNewToken (req, res) {
                     // issue a new access token
                     const accessToken = jwt.sign({id: decoded.id, email: decoded.email, username: decoded.username, role: decoded.role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'})
                     
-                    return res.json({success: true, accessToken})
+                    return res.json({success: true, message: accessToken})
                 }
             })
         } else {
