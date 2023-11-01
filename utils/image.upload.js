@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'aphia-dev/profile-images',
-        transformation: [{width: 200, height: 200, crop: 'limit'}]
+        transformation: [{width: 500, height: 500, crop: 'limit'}]
     }
 })
 
