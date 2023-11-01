@@ -7,7 +7,7 @@ const UserModel = require('../models/user.model')
 async function addReview(req,res){
     try {
         const {id} = req.user
-        const productId = req.params.id
+        const {productId} = req.params
         const {comment, rating} = req.body
 
         if (!productId) {
