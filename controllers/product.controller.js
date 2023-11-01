@@ -131,6 +131,32 @@ async function updateProduct (req, res) {
     }
 }
 
+// add a product image
+async function addProductImage (req, res) {
+    try {
+        const {productId} = req.params
+        const product = await Product.findById(productId)
+        // check if product exists
+        if (!product) {
+            return res.json({success: false, message: 'Product not found'})
+        }
+        if (req.file) {
+            const image_url = req.file.path
+            const updatedProduct = await Product.findByIdAndUpdate(productId, {$push: {images: image_url}}, {new: true})
+            if (!updatedProduct) {
+                return res.json({ success: false, message: 'Failed to update product' });
+            }
+            return res.json({success: true, message: 'Image added successfully'})
+        } else {
+            return res.json({success: false, message: 'No image provided'})
+        }
+    } catch (error) {
+        console.log(error.message)
+        res.json({success: false, message: 'Internal server error'})
+    }
+}
+
+
 // DELETE
 async function deleteProduct (req, res) {
     try {
@@ -149,4 +175,4 @@ async function deleteProduct (req, res) {
     }
 }
 
-module.exports = {createProduct, getProducts, getProductById, updateProduct, deleteProduct}
+module.exports = {createProduct, getProducts, getProductById, updateProduct, addProductImage, deleteProduct}
