@@ -51,7 +51,7 @@ async function getProductReviews(req,res){
 
         for (const review of reviews) {
             const user = await UserModel.findById(review.user_id)
-            const eachReview = {comment: review.comment, rating: review.rating, by: user.first_name, added: review.createdAt, edited: review.updatedAt}
+            const eachReview = {_id: review._id, comment: review.comment, rating: review.rating, by: user.first_name, added: review.createdAt, edited: review.updatedAt}
 
             reviewArr.push(eachReview)
         }
