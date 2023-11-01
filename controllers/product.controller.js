@@ -86,6 +86,9 @@ async function createProduct (req, res) {
 async function getProducts (req, res) {
     try {
         const products = await Product.find().select('-__v')
+        if (empty(products)) {
+            res.json({success: false, message: `No product found`})
+        }
         res.json({success: true, message: products})
     } catch (error) {
         console.log(error.message)
