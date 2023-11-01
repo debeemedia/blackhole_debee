@@ -86,7 +86,7 @@ async function createProduct (req, res) {
 async function getProducts (req, res) {
     try {
         const products = await Product.find().select('-__v')
-        res.json({success: true, products})
+        res.json({success: true, message: products})
     } catch (error) {
         console.log(error.message)
         res.json({success: false, message: 'Internal server error'})
@@ -102,7 +102,7 @@ async function getProductById (req, res) {
         if (!product) {
             return res.json({success: false, message: 'Product not found'})
         }
-        res.json({success: true, product})
+        res.json({success: true, message: product})
 
     } catch (error) {
         console.log(error.message)
