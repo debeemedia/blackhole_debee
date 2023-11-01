@@ -119,11 +119,11 @@ async function deleteReview(req,res){
             return res.json({success: false, message: 'Review not found'})
         }
 
-        if (review.user_id !== id) {
+        if (review.user_id != id) {
             return res.json({success: false, message: 'You are not authorized to perform this action'})
         }
 
-        const updatedReview = ReviewModel.findByIdAndDelete(reviewId)
+        const deletedReview = await ReviewModel.findByIdAndDelete(reviewId)
         
         res.json({success: true, message: 'Review deleted successfully'})
       
