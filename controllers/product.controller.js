@@ -140,16 +140,53 @@ async function addProductImage (req, res) {
         if (!product) {
             return res.json({success: false, message: 'Product not found'})
         }
+
+        // get the uploaded image url and update the database
         if (req.file) {
             const image_url = req.file.path
             const updatedProduct = await Product.findByIdAndUpdate(productId, {$push: {images: image_url}}, {new: true})
+
             if (!updatedProduct) {
                 return res.json({ success: false, message: 'Failed to update product' });
             }
+
             return res.json({success: true, message: 'Image added successfully'})
+
         } else {
             return res.json({success: false, message: 'No image provided'})
         }
+    } catch (error) {
+        console.log(error.message)
+        res.json({success: false, message: 'Internal server error'})
+    }
+}
+
+// remove a product image
+async function removeProductImage (req, res) {
+    try {
+        const {productId} = req.params
+        const product = await Product.findById(productId)
+        // check if product exists
+        if (!product) {
+            return res.json({success: false, message: 'Product not found'})
+        }
+
+        // get the index of the image to be deleted from the request body
+        const deleteIndex = +req.body.deleteIndex
+
+        // check if the deleteIndex is valid and then delete the image by the index from the database
+        if (deleteIndex >= 0 && deleteIndex < product.images.length) {
+            const updatedProduct = await Product.findByIdAndUpdate(productId, {$pull: {images:product.images[deleteIndex]}}, {new: true})
+
+            if (!updatedProduct) {
+                return res.json({ success: false, message: 'Failed to update product' });
+            }
+            
+            return res.json({success: true, message: 'Image removed successfully'})
+        } else {
+            return res.json({success: false, message: 'Please provide a valid deleteIndex'})
+        }
+
     } catch (error) {
         console.log(error.message)
         res.json({success: false, message: 'Internal server error'})
@@ -175,4 +212,4 @@ async function deleteProduct (req, res) {
     }
 }
 
-module.exports = {createProduct, getProducts, getProductById, updateProduct, addProductImage, deleteProduct}
+module.exports = {createProduct, getProducts, getProductById, updateProduct, addProductImage, removeProductImage, deleteProduct}
