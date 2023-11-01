@@ -15,7 +15,6 @@ async function createProduct (req, res) {
             name,
             description,
             price,
-            image,
             category_id,
             quantity
           } = req.body;
@@ -26,7 +25,7 @@ async function createProduct (req, res) {
             name: "string|required",
             description: "string|required",
             price: "required",
-            image: "string|min:1",
+            images: "array|min:1",
             category_id: "required",
             quantity: "min:1"
         };
@@ -48,10 +47,16 @@ async function createProduct (req, res) {
 
         // check if vendor already has a product of the same name
         const existingProduct = await Product.findOne({ name : { $regex: name, $options: 'i' }}) // regex for case-insensitive search
-        console.log(Product);
-        console.log(existingProduct);
         if (existingProduct && existingProduct.user_id == user_id) {
             return res.json({success: false, message: "You already have a product with same name"})
+        }
+
+        // access the uploaded file URLs from req.files (uploaded by multer)
+        const image_default_url = 'https://pic.onlinewebfonts.com/thumbnails/icons_90947.svg'
+        const image_urls = req.files ? req.files.map((file) => file.path) : [image_default_url]
+        // check that user cannot upload more than 5 images
+        if (image_urls.length > 5) {
+            return res.status(400).json({ success: false, message: 'You can upload a maximum of 5 images' });
         }
 
         // create new product and save to database
@@ -60,7 +65,7 @@ async function createProduct (req, res) {
             name,
             description,
             price,
-            image,
+            images: image_urls,
             category_id,
             quantity
         });
