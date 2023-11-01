@@ -82,7 +82,7 @@ async function updateReview(req,res){
             return res.json({success: false, message: 'Review not found'})
         }
 
-        if (review.user_id !== id) {
+        if (review.user_id != id) {
             return res.json({success: false, message: 'You are not authorized to perform this action'})
         }
         
