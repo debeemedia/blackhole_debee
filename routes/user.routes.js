@@ -34,7 +34,7 @@ router.get(ROUTE_USERS_GET, getUsers)
 router.get(ROUTE_USER_LOGOUT, logout)
 
 // update user details
-router.put(ROUTE_USER_UPDATE, authenticate, updateUser)
+router.put(ROUTE_USER_UPDATE, authenticate, upload.single('profile_image'), updateUser)
 
 router.delete(ROUTE_USER_DELETE, authenticate, deleteUser)
 

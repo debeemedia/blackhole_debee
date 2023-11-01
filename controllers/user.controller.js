@@ -104,7 +104,11 @@ async function updateUser(req, res) {
     if (!empty(first_name)) user.first_name = first_name;
     if (!empty(last_name)) user.last_name = last_name;
     if (!empty(phone_number)) user.phone_number = phone_number;
-    if (!empty(image)) user.image = image;
+    // if (!empty(image)) user.image = image;
+    if (req.file) {
+      const image_url = req.file.path
+      user.image = image_url
+    }
     if (!empty(gender)) user.gender = gender;
 
     await user.save();
