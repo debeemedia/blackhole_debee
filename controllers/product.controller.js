@@ -56,7 +56,7 @@ async function createProduct (req, res) {
         const image_urls = req.files ? req.files.map((file) => file.path) : [image_default_url]
         // check that user cannot upload more than 5 images
         if (image_urls.length > 5) {
-            return res.status(400).json({ success: false, message: 'You can upload a maximum of 5 images' });
+            return res.json({ success: false, message: 'You can upload a maximum of 5 images' });
         }
 
         // create new product and save to database

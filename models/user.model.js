@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const OrderModel = require("./order.model");
 const { ReviewModel } = require("./review.model");
 const PaymentModel = require("./payment.model");
+const Favourite = require("./favourite.model");
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -84,6 +85,7 @@ userSchema.pre("findByIdAndDelete", async function (next) {
         await OrderModel.deleteMany({ user_id: user._id });
         await ReviewModel.deleteMany({user_id: user._id})
         await PaymentModel.deleteMany({user_id: user._id})
+        await Favourite.deleteMany({user_id: user._id})
         next();
     } catch (error) {
         return next(error);
