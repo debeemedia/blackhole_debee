@@ -19,7 +19,7 @@ const categorySchema = new mongoose.Schema({
 
 categorySchema.pre('findByIdAndDelete', async function (next) {
     category = this
-    Products.deleteMany({category_id: category._id})
+    await Products.deleteMany({category_id: category._id})
     next()
 })
 
