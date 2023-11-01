@@ -20,13 +20,13 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
-        image: {
+        images: [{
             type: String,
             required: true,
             min: [1,'add more images'],
             max: 5,
             default: 'https://pic.onlinewebfonts.com/thumbnails/icons_90947.svg'
-        },
+        }],
         category_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category',
