@@ -1,32 +1,41 @@
 const Products = require('../models/product.model');
-const Favourites = require('../models/favouriteModel')
+const Favourites = require('../models/favourite.model')
 
 
 async function createFavourites (req, res){
     try {
-      const { productId } = req.body;
+      const { product_id } = req.body;
+      const {id} = req.user
+
+      if (!id) {
+        return res.json({success: false, message: `Unauthorized, please log in`})
+      }
+
+      if(!product_id){
+        return res.json({success: false, message: `Please provide required field`})
+      }
       
-      const product = await Products.findById(productId);
+      const product = await Products.findById(product_id);
   
       if (!product) {
-        return res.status(404).json({ error: 'Product not found' });
+        return res.json({success: false, message: 'Product not found' });
       }
   
-      const existingFavourite = await Favourites.findOne({ user: req.user.id, product: productId });
+      const existingFavourite = await Favourites.findOne({ user_id: id, product_id});
   
       if (existingFavourite) {
-        return res.status(400).json({ error: 'Product is already in favourites' });
+        return res.json({success: false, message: 'Product is already in favourites' });
       }
   
       const favourite = new Favourites({
-        user: req.user.id,
-        product: productId
+        user_id: id,
+        product_id
       });
   
       await favourite.save();
-      res.json({ message: 'Added to favorites' });
+      res.json({success: true, message: 'Added to favorites' });
     } catch (error) {
-      res.status(500).json({ error: 'Internal server error' });
+      res.json({success: false, error: 'Internal server error' });
     }
   };
   
