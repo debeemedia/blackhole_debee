@@ -95,7 +95,7 @@ async function updateReview(req,res){
             updateDetails.rating = rating
         }
 
-        const updatedReview = ReviewModel.findByIdAndUpdate(reviewId, updateDetails, {new: true})
+        const updatedReview = await ReviewModel.findByIdAndUpdate(reviewId, updateDetails, {new: true})
         
 
         res.json({success: true, message: 'Review updated successfully'})
