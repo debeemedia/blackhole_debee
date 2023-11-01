@@ -46,7 +46,7 @@ async function createVendor(req, res) {
 
   const validateResult = validateData(req.body, validateRule, validateMessage);
   if (!validateResult.success) {
-    return res.json(validateResult.data);
+    return res.json({success: false, message: validateResult.data});
   }
 
   try {
