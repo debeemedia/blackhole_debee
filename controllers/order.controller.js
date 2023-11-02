@@ -21,12 +21,13 @@ async function createOrder(req, res, next) {
         state: "required|string",
         postal_code: "required|string",
         phone_number: "required|string",
-        products: "required|string",
+        products: "required|array",
+        amount: "required"
     };
 
     const validationMessage = {
         required: ":attribute is required",
-        string: ":attribute must be a string",
+        string: ":attribute must be a string"
     };
 
     const validateResult = validateData(req.body,validationRule,validationMessage);
@@ -144,7 +145,7 @@ async function getAllOrders(req, res) {
     }   
 }
 
-async function markDevivered(req, res) {
+async function markDelivered(req, res) {
     try {
     const {delivery_date, completed} = req.body
     const {orderId} = req.params
@@ -179,7 +180,7 @@ async function markDevivered(req, res) {
 }
 
 module.exports = {
-    markDevivered,
+    markDelivered,
     createOrder,
     getAllOrdersByUser,
     getAllOrders,

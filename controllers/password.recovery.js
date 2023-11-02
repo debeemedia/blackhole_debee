@@ -2,7 +2,7 @@
 const nodemailer = require('nodemailer')
 const crypto = require('crypto');
 const RecoverModel = require('../models/password-remodel');
-const dotenv = require('promise-dotenv').config()
+const dotenv = require('dotenv').config()
 const {buildEmailTemplate, sendMail} = require('../utils/mail');
 const UserModel = require('../models/user.model');
 
@@ -58,7 +58,7 @@ async function generateToken(req,res){
   if(!savedToken){
     return res.json({success: false, message: 'invalid or expired token' });
   }
-  if(token != savedToken){
+  if(token != savedToken.token){
     return res.json({success: false, message: 'invalid token' });
   }
   user.password = password;
