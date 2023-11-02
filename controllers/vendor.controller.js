@@ -19,7 +19,6 @@ async function createVendor(req, res) {
     account_name,
     security_question,
     security_answer,
-    image,
     gender,
     product_ids
   } = req.body;
@@ -59,6 +58,10 @@ async function createVendor(req, res) {
     } else if (!empty(existingUsername)) {
       res.json({ success: false, message: "Username already taken" });
     } else {
+      // access the uploaded file URL from req.file (uploaded by multer)
+      const image_default_url = 'https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
+      const image_url = req.file ? req.file.path : image_default_url
+
       const newVendor = new VendorModel({
         username,
         email,
@@ -74,7 +77,7 @@ async function createVendor(req, res) {
         role: 'vendor',
         security_question,
         security_answer,
-        image,
+        image: image_url,
         gender,
         product_ids
       });
