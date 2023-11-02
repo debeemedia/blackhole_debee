@@ -50,18 +50,18 @@ async function deleteCategory(req,res){
 //Get all products in a category
 async function getProductsByCategory(req,res){
     try {
-        const {categoryId} = req.params
+        const {categoryName} = req.params
         
-        if (!categoryId) {
-            return res.json({success: false, message: 'Please provide category ID'})
+        if (!categoryName) {
+            return res.json({success: false, message: 'Please provide category name'})
         }
         
-        const category = await CategoryModel.findById(categoryId)
+        const category = await CategoryModel.findOne({name: categoryName})
         if (!category) {
             return res.json({success: false, message: 'Category not found'})
         }
 
-        const products = await Products.find({category_id: categoryId}).select('-__v')
+        const products = await Products.find({category_id: category._id}).select('-__v')
         if (products.length == 0) {
             return res.json({success: false, message: 'No product found in this category'})
         }
