@@ -1,9 +1,9 @@
 
 const express = require('express')
 const router = express.Router()
-const { getUsers, createUser, updateUser, deleteUser } = require('../controllers/user.controller')
+const { getUsers, createUser, updateUser, deleteUser, resendMail } = require('../controllers/user.controller')
 const { createVendor } = require('../controllers/vendor.controller')
-const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_TOKEN, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET, ROUTE_USER_DELETE, ROUTE_FORGOT_PASSWORD, ROUTE_RESET_PASSWORD } = require('../lib/page-route')
+const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_TOKEN, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET, ROUTE_USER_DELETE, ROUTE_RESEND, ROUTE_FORGOT_PASSWORD, ROUTE_RESET_PASSWORD } = require('../lib/page-route')
 const { verifyEmail, sendConfirmationMail } = require('../controllers/verify.email.controller')
 const { issueNewToken } = require('../middleware/issue.token')
 const { login } = require('../controllers/login.controller')
@@ -15,6 +15,9 @@ const { profile_upload } = require('../utils/image.upload')
 //register as a user 
 // router.route(ROUTE_HOME).get(getUsers)
 router.post(ROUTE_USER_REGISTER, profile_upload.single('profile_image'), createUser)
+
+//resend verification mail
+router.post(ROUTE_RESEND, resendMail)
 
 //register as a vendor
 router.post(ROUTE_VENDOR_REGISTER, profile_upload.single('profile_image'), createVendor)
