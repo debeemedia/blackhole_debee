@@ -81,6 +81,7 @@ async function createUser(req, res) {
     res.json({ success: false, message: "internal server error" });
   }
 }
+
 async function getUsers(req, res) {
   try {
     const users = await UserModel.find();
@@ -132,9 +133,36 @@ async function deleteUser(req, res) {
   }
 }
 
+// Resend email
+async function resendMail(req, res){
+  try {
+    const { email } = req.body;
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    const emailOption = {
+      to: email,
+      from: "Aphia",
+      subject: "Registration Successful",
+      html: await buildEmailTemplate("verify_email.ejs", user),
+    };
+    await sendMail(emailOption, res);
+
+    res.json({ success: true, message: "Email resent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Internal server error" });
+  }
+};
+
+
 module.exports = {
   createUser,
   getUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  resendMail
 };
