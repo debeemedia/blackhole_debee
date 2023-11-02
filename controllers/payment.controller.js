@@ -20,11 +20,11 @@ async function initiatePayment (req, res) {
 
         // payment details
         const paymentData = {
-            amount: 1000,
+            amount: order.amount,
             currency: 'NGN',
             email: user.email,
             phone_number: user.phone_number,
-            fullname: `${user.first_name}, ${user.last_name}`,
+            fullname: `${user.first_name} ${user.last_name}`,
             tx_ref: `TXN-${uuidv4()}`,
             narration: 'Aphia'
         }

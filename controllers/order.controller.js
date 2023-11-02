@@ -3,7 +3,7 @@ const validateData = require("../utils/validate");
 const { empty } = require("../utils/helpers");
 
 async function createOrder(req, res, next) {
-    const user_id = req.user._id;
+    const user_id = req.user.id
     const {
         street_address,
         city,
@@ -12,22 +12,28 @@ async function createOrder(req, res, next) {
         phone_number,
         alternate_phone_number,
         products,
-        amount
+        amount,
+        currency,
+        order_date,
+        delivery_date,
+        tx_ref
     } = req.body;
 
     const validationRule = {
         street_address: "required|string",
         city: "required|string",
         state: "required|string",
-        postal_code: "required|string",
+        postal_code: "string",
         phone_number: "required|string",
+        alternate_phone_number: "string",
         products: "required|array",
         amount: "required"
     };
 
     const validationMessage = {
         required: ":attribute is required",
-        string: ":attribute must be a string"
+        string: ":attribute must be a string",
+        array: ":attribute must be an array"
     };
 
     const validateResult = validateData(req.body,validationRule,validationMessage);
@@ -68,7 +74,8 @@ async function createOrder(req, res, next) {
 
 async function getAllOrdersByUser(req, res) {
     try {
-        const user_id = req.user
+        const user_id = req.user.id
+        
         if (empty(user_id)) {
             return res.json({success: false, message: 'You are not authorized to access this resource, Please login'})
         }
@@ -86,7 +93,7 @@ async function getAllOrdersByUser(req, res) {
 
 async function getAnOrderByUser(req, res){
     try {
-        const user_id = req.user._id
+        const user_id = req.user.id
         const {orderId} = req.params
         if (empty(user_id)) {
             return res.json({success: false, message: 'You are not authorized to access this resource. Please login'})
