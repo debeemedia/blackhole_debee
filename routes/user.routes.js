@@ -1,7 +1,7 @@
 
 const express = require('express')
 const router = express.Router()
-const { getUsers, createUser, updateUser, deleteUser } = require('../controllers/user.controller')
+const { getUsers, createUser, updateUser, deleteUser, resendMail } = require('../controllers/user.controller')
 const { createVendor } = require('../controllers/vendor.controller')
 const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_TOKEN, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET, ROUTE_USER_DELETE, ROUTE_RESEND } = require('../lib/page-route')
 const { verifyEmail, sendConfirmationMail } = require('../controllers/verify.email.controller')
