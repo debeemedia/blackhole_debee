@@ -41,7 +41,7 @@ async function removeFromFlash(req, res){
         }
 
         await flash.remove()
-        res.json({success: false, message: `Product removed from flash sale successfully`})
+        res.json({success: true, message: `Product removed from flash sale successfully`})
     } catch (error) {
         return res.json({success: false, message: error.message})
     }
@@ -50,6 +50,11 @@ async function removeFromFlash(req, res){
 async function getFlashSales(req, res) {
     try {
         const flash = await FlashModel.find().populate('product_id').select('-__v')
+        if(flash.length == 0){
+            res.json({success: false, message: `No products in flash sales`})
+        }
+
+        res.json({success: true, message: flash})
 
     } catch (error) {
         return res.json({success: false, message: error.message})

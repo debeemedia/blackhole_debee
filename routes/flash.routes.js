@@ -1,6 +1,6 @@
 
 const express = require('express')
-const { ROUTE_FLASH_ADD, ROUTE_FLASH_GET } = require('../lib/page-route')
+const { ROUTE_FLASH_ADD, ROUTE_FLASH_GET, ROUTE_FLASH_REMOVE } = require('../lib/page-route')
 const { authenticate } = require('../middleware/auth')
 const { checkVendor } = require('../middleware/check.vendor')
 const { checkVendorOwnership } = require('../middleware/check.vendor.ownership')
