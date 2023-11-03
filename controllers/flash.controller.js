@@ -12,7 +12,7 @@ async function addToFlash(req, res){
             return res.json({success: false, message: `Please provide required fields`})
         }
 
-        const existingFlash = await FlashModel.findOne({product_id})
+        const existingFlash = await FlashModel.findOne({product: product_id})
         if (existingFlash) {
             return res.json({success: false, message: `Product already added to flash sale`})
         }
@@ -31,7 +31,7 @@ async function removeFromFlash(req, res){
         const {id} = req.user
         const {product_id} = req.body
 
-        const flash = await FlashModel.findOne({product_id})
+        const flash = await FlashModel.findOne({product: product_id})
         if (!flash) {
             return res.json({success: false, message: `Product not found`})
         }
@@ -49,7 +49,7 @@ async function removeFromFlash(req, res){
 
 async function getFlashSales(req, res) {
     try {
-        const flash = await FlashModel.find().populate('product_id').select('-__v')
+        const flash = await FlashModel.find().populate('product').select('-__v')
         if(flash.length == 0){
             res.json({success: false, message: `No products in flash sales`})
         }

@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 
 const flashSchema = new mongoose.Schema({
-    product_id: {
+    product: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
         required: true
