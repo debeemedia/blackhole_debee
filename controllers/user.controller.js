@@ -92,7 +92,7 @@ async function getUsers(req, res) {
 }
 
 async function updateUser(req, res) {
-    const { username, email, password, first_name, last_name, phone_number, image, gender } =req.body;
+    const { username, email, password, first_name, last_name, phone_number, business_name, account_number, bank, bank_code, account_name, gender } = req.body;
     // get the user id from the decoded user in jwt
     const userId = req.user.id;
     if(empty(userId)){
@@ -105,7 +105,11 @@ async function updateUser(req, res) {
     if (!empty(first_name)) user.first_name = first_name;
     if (!empty(last_name)) user.last_name = last_name;
     if (!empty(phone_number)) user.phone_number = phone_number;
-    // if (!empty(image)) user.image = image;
+    if (!empty(business_name)) user.business_name = business_name;
+    if (!empty(account_number)) user.account_number = account_number;
+    if (!empty(bank)) user.bank = bank;
+    if (!empty(bank_code)) user.bank_code = bank_code;
+    if (!empty(account_name)) user.account_name = account_name;
     if (req.file) {
       const image_url = req.file.path
       user.image = image_url
