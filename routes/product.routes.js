@@ -1,9 +1,9 @@
 // import express, controllers and middleware
 const express = require('express')
-const { createProduct, getProducts, getProductById, updateProduct, deleteProduct, addProductImage, removeProductImage } = require('../controllers/product.controller')
+const { createProduct, getProducts, getProductById, updateProduct, deleteProduct, addProductImage, removeProductImage, getProductsByVendor } = require('../controllers/product.controller')
 const { checkVendor } = require('../middleware/check.vendor')
 const { checkVendorOwnership } = require('../middleware/check.vendor.ownership')
-const { ROUTE_PRODUCT_CREATE, ROUTE_GET_PRODUCT, ROUTE_PRODUCT_GET_ALL, ROUTE_PRODUCT_UPDATE, ROUTE_PRODUCT_DELETE, ROUTE_PRODUCT_IMAGE_ADD, ROUTE_PRODUCT_IMAGE_REMOVE } = require('../lib/page-route')
+const { ROUTE_PRODUCT_CREATE, ROUTE_GET_PRODUCT, ROUTE_PRODUCT_GET_ALL, ROUTE_PRODUCT_UPDATE, ROUTE_PRODUCT_DELETE, ROUTE_PRODUCT_IMAGE_ADD, ROUTE_PRODUCT_IMAGE_REMOVE, ROUTE_PRODUCT_GET_VENDOR } = require('../lib/page-route')
 const { authenticate } = require('../middleware/auth')
 const { product_upload } = require('../utils/image.upload')
 
@@ -17,6 +17,7 @@ productRouter.post(ROUTE_PRODUCT_CREATE, authenticate, checkVendor, product_uplo
 
 // GET/READ
 productRouter.get(ROUTE_PRODUCT_GET_ALL, getProducts) // get all products
+productRouter.get(ROUTE_PRODUCT_GET_VENDOR, authenticate, getProductsByVendor) // get all products by a vendor
 productRouter.get(ROUTE_GET_PRODUCT, getProductById) // get a product
 
 // PUT/UPDATE
