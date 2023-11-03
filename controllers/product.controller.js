@@ -96,6 +96,21 @@ async function getProducts (req, res) {
     }
 }
 
+// function to get all products by a vendor
+async function getProductsByVendor (req, res) {
+    try {
+        const userId = req.user.id
+        const products = await Product.find({user_id: userId}).select('-__v')
+        if (empty(products)) {
+            return res.json({success: false, message: `You don't have a product yet`})
+        }
+        res.json({success: true, message: products})
+    } catch (error) {
+        console.log(error.message)
+        res.json({success: false, message: 'Internal server error'})
+    }
+}
+
 // function to get a product by id
 async function getProductById (req, res) {
     try {
@@ -212,4 +227,4 @@ async function deleteProduct (req, res) {
     }
 }
 
-module.exports = {createProduct, getProducts, getProductById, updateProduct, addProductImage, removeProductImage, deleteProduct}
+module.exports = {createProduct, getProducts, getProductsByVendor, getProductById, updateProduct, addProductImage, removeProductImage, deleteProduct}

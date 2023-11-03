@@ -43,7 +43,7 @@ async function createOrder(req, res, next) {
 
     try {
         if (empty(user_id)) {
-            return res.json({success: false, message: 'You are not logged in. Please login to make orde'})
+            return res.json({success: false, message: 'You are not logged in. Please login to make order'})
         }
 
         const newOrder = new OrderModel({
