@@ -48,6 +48,9 @@ productSchema.pre('findByIdAndDelete', async function (next) {
     next()
 })
 
+// Create text indexes (for search) // NB: must also be set up on atlas
+productSchema.index({ name: 'text', description: 'text' });
+
 const ProductModel = mongoose.model('Product', productSchema)
 
 module.exports = ProductModel
