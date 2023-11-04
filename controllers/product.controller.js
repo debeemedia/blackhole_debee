@@ -227,26 +227,63 @@ async function deleteProduct (req, res) {
     }
 }
 
-async function searchProducts (req, res) {
+// async function searchProducts (req, res) {
+//     try {
+//         // get the search query from the request body
+//         const query = req.body.query
+//         // validate request body
+//         if (!query) {
+//             return res.json({success: false, message: 'Please provide a search query'});
+//         }
+//         // find the products that match the search query (indexing has been set up in the product model and on atlas)
+//         const results = await Product.find({$text: {$search: query}})
+//         // check if query returns a search
+//         if (!results || results.length == 0) {
+//             return res.json({success: false, message: 'No result found'})
+//         }
+
+//         res.json({success: true, message: results})
+      
+//     } catch (error) {
+//         console.log(error.message)
+//         res.json({success: false, message: 'Internal server error'})
+//     }
+// }
+
+async function searchProducts(req, res) {
     try {
         // get the search query from the request body
-        const query = req.body.query
-        // validate request body
+        const query = req.body.query;
+        // get the pagination parameters from the request body and set defaults
+        const page = +req.body.page || 1
+        const limit = +req.body.limit || 10
+
+        // validate the query in the request body
         if (!query) {
-            return res.json({success: false, message: 'Please provide a search query'});
-        }
-        // find the products that match the search query (indexing has been set up in the product model and on atlas)
-        const results = await Product.find({$text: {$search: query}})
-        // check if query returns a search
-        if (!results || results.length == 0) {
-            return res.json({success: false, message: 'No result found'})
+            return res.json({ success: false, message: 'Please provide a search query' });
         }
 
-        res.json({success: true, message: results})
-      
+        // calculate the number of items to skip based on the page and limit
+        const skip = (page - 1) * limit;
+
+        // find the products that match the search query (indexing has been set up in the product model and on atlas); and apply pagination
+        const results = await Product.find({ $text: { $search: query } }).skip(skip).limit(limit);
+
+        // check if query returns a search result
+        if (!results || results.length === 0) {
+            return res.json({ success: false, message: 'No result found' });
+        }
+
+        // calculate the total number of documents in the product collection and use it to calculate the total pages
+        const totalCount = await Product.countDocuments({$text: {$search: query}});
+        const totalPages = Math.ceil(totalCount / limit);
+
+        // return the results array and the pagination details in the response body
+        res.json({success: true, message: {results, pagination: {page, limit, totalPages, totalCount}}})
+
     } catch (error) {
-        console.log(error.message)
-        res.json({success: false, message: 'Internal server error'})
+        console.log(error.message);
+        res.json({ success: false, message: 'Internal server error' });
     }
 }
 
