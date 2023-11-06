@@ -22,7 +22,7 @@ async function addToFlash(req, res){
             return res.json({success: false, message: `Product already added to flash sale`})
         }
 
-        const newFlash = new FlashModel({product_id, user_id: id, new_price})
+        const newFlash = new FlashModel({product, user_id: id, new_price})
         await newFlash.save()
 
         return res.json({success: true, message: `Product added to flash sale`})
