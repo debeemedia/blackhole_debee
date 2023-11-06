@@ -13,6 +13,10 @@ async function addToFlash(req, res){
         }
 
         const product = await ProductModel.findById(product_id)
+        if (!product) {
+            return res.json({success: false, message: `Product not found`})
+        }
+
         if (product.user_id != id) {
             return res.json({success: false, message: `You are not the vendor of this product`})
         }
