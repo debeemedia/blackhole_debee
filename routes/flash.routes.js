@@ -9,7 +9,7 @@ const router = express.Router()
 
 
 router.post(ROUTE_FLASH_ADD, authenticate, checkVendor,  addToFlash)
-router.delete(ROUTE_FLASH_REMOVE, authenticate, checkVendor, checkVendorOwnership, removeFromFlash)
+router.delete(ROUTE_FLASH_REMOVE, authenticate, checkVendor, removeFromFlash)
 router.get(ROUTE_FLASH_GET, getFlashSales)
 
 module.exports.flashRouter = router
