@@ -12,6 +12,11 @@ async function addToFlash(req, res){
             return res.json({success: false, message: `Please provide required fields`})
         }
 
+        const product = await ProductModel.findById(product_id)
+        if (product.user_id != id) {
+            return res.json({success: false, message: `You are not the vendor of this product`})
+        }
+
         const existingFlash = await FlashModel.findOne({product: product_id})
         if (existingFlash) {
             return res.json({success: false, message: `Product already added to flash sale`})

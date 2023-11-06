@@ -8,7 +8,7 @@ const { addToFlash, removeFromFlash, getFlashSales } = require('../controllers/f
 const router = express.Router()
 
 
-router.post(ROUTE_FLASH_ADD, authenticate, checkVendor, addToFlash)
+router.post(ROUTE_FLASH_ADD, authenticate, checkVendor,  addToFlash)
 router.delete(ROUTE_FLASH_REMOVE, authenticate, checkVendor, checkVendorOwnership, removeFromFlash)
 router.get(ROUTE_FLASH_GET, getFlashSales)
 
