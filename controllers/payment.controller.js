@@ -46,6 +46,7 @@ async function initiatePayment (req, res) {
         })
         .catch(error => {
             console.log(error);
+            res.json({success: false, message: 'Payment initiation unsuccessful'})
         })
         
     } catch (error) {
