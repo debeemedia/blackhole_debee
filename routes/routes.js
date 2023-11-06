@@ -20,7 +20,7 @@ router.use('/faqs', faqRouter)
 router.use('/orders', orderRouter)
 router.use('/favorites', favoritesRouter)
 router.use(paymentRouter)
-router.use(flashRouter)
+router.use('/flash', flashRouter)
 
 
 module.exports = router
