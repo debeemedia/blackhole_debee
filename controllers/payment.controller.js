@@ -94,20 +94,26 @@ async function listenWebhook (req, res) {
             currency: payload.data.currency,
             status: 'pending'
         }
+        await PaymentModel.create(paymentData)
+
+        const payment = await PaymentModel.findOne({transaction_id})
+        const payment_id = payment._id
 
         // check if payment was successful
         if (payload.data.status === 'successful' && payload.data.charged_amount >= payload.data.amount) {
             
-            paymentData.status = 'completed'
+            // update payment status in the database to completed
+            await PaymentModel.findByIdAndUpdate(payment_id, {status: 'completed'}, {new: true})
             
-            // update order status in the database
+            // update order status in the database to completed
             await OrderModel.findByIdAndUpdate(orderId, {completed: true}, {new: true})
 
         } else if (payload.data.status === 'failed') {
-            paymentData.status = 'failed'
+            // update payment status in the database to failed
+            await PaymentModel.findByIdAndUpdate(payment_id, {status: 'failed'}, {new: true})
+
         }
 
-        await PaymentModel.create(paymentData)
 
         // acknowledge receipt of webhook by returning 200 status code to flutterwave
         res.status(200)
