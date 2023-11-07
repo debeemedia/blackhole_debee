@@ -84,34 +84,58 @@ async function listenWebhook (req, res) {
         //     console.log('Payment unsuccessful')
         // }
         // create a payment record in the database
-        const payment = new PaymentModel({
-            user_id: userId,
-            order_id: orderId,
-            transaction_id: payload.data.tx_ref,
-            payment_gateway: 'Flutterwave',
-            payment_method: 'Bank transfer',
-            amount: payload.data.amount,
-            currency: payload.data.currency,
-            status: 'pending'
-        })
-        await payment.save()
+        
 
-        // const payment = await PaymentModel.findOne({transaction_id})
+        const payment = await PaymentModel.findOne({transaction_id})
         const payment_id = payment._id
 
         // check if payment was successful
         if (payload.data.status === 'successful' && payload.data.charged_amount >= payload.data.amount) {
+            const paymentData = {
+                user_id: userId,
+                order_id: orderId,
+                transaction_id: payload.data.tx_ref,
+                payment_gateway: 'Flutterwave',
+                payment_method: 'Bank transfer',
+                amount: payload.data.amount,
+                currency: payload.data.currency,
+                status: 'successful'
+            }
+            await PaymentModel.create(paymentData)
             
-            // update payment status in the database to completed
-            await PaymentModel.findByIdAndUpdate(payment_id, {status: 'completed'}, {new: true})
+            // // update payment status in the database to completed
+            // await PaymentModel.findByIdAndUpdate(payment_id, {status: 'completed'}, {new: true})
             
             // update order status in the database to completed
             await OrderModel.findByIdAndUpdate(orderId, {completed: true}, {new: true})
 
         } else if (payload.data.status === 'failed') {
-            // update payment status in the database to failed
-            await PaymentModel.findByIdAndUpdate(payment_id, {status: 'failed'}, {new: true})
+            const paymentData = {
+                user_id: userId,
+                order_id: orderId,
+                transaction_id: payload.data.tx_ref,
+                payment_gateway: 'Flutterwave',
+                payment_method: 'Bank transfer',
+                amount: payload.data.amount,
+                currency: payload.data.currency,
+                status: 'failed'
+            }
+            await PaymentModel.create(paymentData)
+            // // update payment status in the database to failed
+            // await PaymentModel.findByIdAndUpdate(payment_id, {status: 'failed'}, {new: true})
 
+        } else {
+            const paymentData = {
+                user_id: userId,
+                order_id: orderId,
+                transaction_id: payload.data.tx_ref,
+                payment_gateway: 'Flutterwave',
+                payment_method: 'Bank transfer',
+                amount: payload.data.amount,
+                currency: payload.data.currency,
+                status: 'pending'
+            }
+            await PaymentModel.create(paymentData)
         }
 
 
