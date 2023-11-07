@@ -28,7 +28,7 @@ async function login (req, res) {
                 // issue refresh token
                 const refreshToken = jwt.sign({id: user._id, email: user.email, username: user.username, role: user.role}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1h'})
                 // set refresh token in cookie
-                res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'None', secure: false, maxAge: 60 * 60 * 1000})
+                res.cookie('jwt', refreshToken, {httpOnly: false, sameSite: 'None', secure: false, maxAge: 60 * 60 * 1000})
 
                 res.json({success: true, message: accessToken})
 
