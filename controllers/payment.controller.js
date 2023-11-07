@@ -42,7 +42,7 @@ async function initiatePayment (req, res) {
         .then(response => {
             console.log(response.data)
             console.log('tx_ref:', paymentData.tx_ref);
-            res.json({success: true, message: 'Order created and payment initiated successfully', orderId, transaction_id: paymentData.tx_ref, paymentInitiation: response.data})
+            res.json({success: true, message: 'Order created and payment initiated successfully', orderId, transactionId: paymentData.tx_ref, paymentInitiation: response.data})
         })
         .catch(error => {
             console.log(error);
