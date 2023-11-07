@@ -84,7 +84,7 @@ async function listenWebhook (req, res) {
         //     console.log('Payment unsuccessful')
         // }
         // create a payment record in the database
-        const paymentData = {
+        const payment = new PaymentModel({
             user_id: userId,
             order_id: orderId,
             transaction_id: payload.data.tx_ref,
@@ -93,10 +93,10 @@ async function listenWebhook (req, res) {
             amount: payload.data.amount,
             currency: payload.data.currency,
             status: 'pending'
-        }
-        await PaymentModel.create(paymentData)
+        })
+        await payment.save()
 
-        const payment = await PaymentModel.findOne({transaction_id})
+        // const payment = await PaymentModel.findOne({transaction_id})
         const payment_id = payment._id
 
         // check if payment was successful
