@@ -12,10 +12,20 @@ app.use(express.static(path.join(__dirname, 'public')))
 const PORT = process.env.PORT || 5000
 const mongoURL = process.env.MONGODB_URL || 'please enter your mongo db connection string in the created .env file'
 
-app.use(cors({
-    origin: '*',
-    credentials: true
-}))
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(cookieParser())
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
