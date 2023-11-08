@@ -155,10 +155,23 @@ async function retryPayment (req, res) {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
+        .then(async response => {
             console.log(response.data)
             console.log('tx_ref:', paymentData.tx_ref);
-            res.json({success: true, message: 'Payment initiated successfully', transaction_id: paymentData.tx_ref, paymentInitiation: response.data})
+            // create a payment record in the database with status pending
+            const payment = new PaymentModel({
+                user_id,
+                order_id: orderId,
+                transaction_id: paymentData.tx_ref,
+                payment_gateway: 'Flutterwave',
+                payment_method: 'Bank transfer',
+                amount: order.amount,
+                currency: 'NGN',
+                status: 'pending'
+            })
+            await payment.save()
+
+            res.json({success: true, message: 'Payment initiated successfully', transactionId: paymentData.tx_ref, paymentInitiation: response.data})
         })
         .catch(error => {
             console.log(error);
