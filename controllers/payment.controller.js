@@ -20,11 +20,11 @@ async function initiatePayment (req, res) {
 
         // payment details
         const paymentData = {
-            amount: 1000,
+            amount: order.amount,
             currency: 'NGN',
             email: user.email,
             phone_number: user.phone_number,
-            fullname: `${user.first_name}, ${user.last_name}`,
+            fullname: `${user.first_name} ${user.last_name}`,
             tx_ref: `TXN-${uuidv4()}`,
             narration: 'Aphia'
         }
@@ -42,15 +42,16 @@ async function initiatePayment (req, res) {
         .then(response => {
             console.log(response.data)
             console.log('tx_ref:', paymentData.tx_ref);
-            res.status(200).json({success: true, message: 'Order created and payment initiated successfully', orderId, paymentInitiation: response.data})
+            res.json({success: true, message: 'Order created and payment initiated successfully', orderId, paymentInitiation: response.data})
         })
         .catch(error => {
             console.log(error);
+            res.json({success: false, message: 'Payment initiation unsuccessful'})
         })
         
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({success: true, message: 'Internal server error'})
+        res.json({success: true, message: 'Internal server error'})
     }
 }
 // webhook for flutterwave to listen for payment and make post request
@@ -61,7 +62,7 @@ async function listenWebhook (req, res) {
         const signature = req.headers['verif-hash']
         // // verify the authenticity of webhook payload (if it is from flutterwave)
         if (!signature || signature != secretHash) {
-            return res.status(401).json({success: false, message: 'No/Invalid webhook secret hash'})
+            return res.json({success: false, message: 'No/Invalid webhook secret hash'})
         }
 
         // get payload from flutterwave
@@ -105,7 +106,7 @@ async function listenWebhook (req, res) {
 
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({success: true, message: 'Internal server error'})
+        res.json({success: true, message: 'Internal server error'})
     }
 }
 

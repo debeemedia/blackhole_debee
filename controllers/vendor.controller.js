@@ -19,7 +19,6 @@ async function createVendor(req, res) {
     account_name,
     security_question,
     security_answer,
-    image,
     gender,
     product_ids
   } = req.body;
@@ -46,16 +45,23 @@ async function createVendor(req, res) {
 
   const validateResult = validateData(req.body, validateRule, validateMessage);
   if (!validateResult.success) {
-    return res.status(400).json(validateResult.data);
+    return res.json({success: false, message: validateResult.data});
   }
 
   try {
     // vendor is an extension of user so we check the user model for existing email or username
-    const existing = await UserModel.findOne({$or: [{email}, {username}]})
+    const existingEmail = await UserModel.findOne({email})
+    const existingUsername = await UserModel.findOne({username})
 
-    if (!empty(existing)) {
-      res.status(400).json({ success: false, message: "email or username already exists" });
+    if (!empty(existingEmail)) {
+      res.json({ success: false, message: "Vendor with email address exists" });
+    } else if (!empty(existingUsername)) {
+      res.json({ success: false, message: "Username already taken" });
     } else {
+      // access the uploaded file URL from req.file (uploaded by multer)
+      const image_default_url = 'https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
+      const image_url = req.file ? req.file.path : image_default_url
+
       const newVendor = new VendorModel({
         username,
         email,
@@ -71,7 +77,7 @@ async function createVendor(req, res) {
         role: 'vendor',
         security_question,
         security_answer,
-        image,
+        image: image_url,
         gender,
         product_ids
       });
@@ -87,12 +93,11 @@ async function createVendor(req, res) {
       await sendMail(emailOption, res);
 
       res
-        .status(201)
         .json({ success: true, message: "vendor created successfully" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "internal server error" });
+    res.json({ success: false, message: "internal server error" });
   }
 }
 

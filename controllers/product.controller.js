@@ -15,8 +15,7 @@ async function createProduct (req, res) {
             name,
             description,
             price,
-            image,
-            category_name,
+            category_id,
             quantity
           } = req.body;
           
@@ -26,8 +25,8 @@ async function createProduct (req, res) {
             name: "string|required",
             description: "string|required",
             price: "required",
-            image: "string|min:1",
-            category_name: "string|required",
+            images: "array|min:1",
+            category_id: "required",
             quantity: "min:1"
         };
         const validateMessage = {
@@ -37,21 +36,28 @@ async function createProduct (req, res) {
         };
         const validateResult = validateData(req.body, validateRule, validateMessage);
         if (!validateResult.success) {
-            return res.status(400).json(validateResult.data);
+            return res.json(validateResult.data);
         }
 
         // check if category exists
-        // const categoryExists = await CategoryModel.findOne({category_name})
-        // if (empty(categoryExists)) {
-        //     return res.status(404).json({ success: false, message: "Category not found" });
-        // }
+        const categoryExists = await CategoryModel.findById(category_id)
+        if (empty(categoryExists)) {
+            return res.json({ success: false, message: "Category not found" });
+        }
 
-        // // check if vendor already of same name
-        // const existingProduct = await Product.findOne({name})
-        // if (existingProduct.user_id == user_id) {
-        //     return res.status(400).json({success: false, message: "You already have a product with same name"})
-        // }
+        // check if vendor already has a product of the same name
+        const existingProduct = await Product.findOne({ name : { $regex: name, $options: 'i' }}) // regex for case-insensitive search
+        if (existingProduct && existingProduct.user_id == user_id) {
+            return res.json({success: false, message: "You already have a product with same name"})
+        }
 
+        // access the uploaded file URLs from req.files (uploaded by multer)
+        const image_default_url = 'https://pic.onlinewebfonts.com/thumbnails/icons_90947.svg'
+        const image_urls = req.files ? req.files.map((file) => file.path) : [image_default_url]
+        // check that user cannot upload more than 5 images
+        if (image_urls.length > 5) {
+            return res.json({ success: false, message: 'You can upload a maximum of 5 images' });
+        }
 
         // create new product and save to database
         const newProduct = new Product({
@@ -59,19 +65,18 @@ async function createProduct (req, res) {
             name,
             description,
             price,
-            image,
-            category_name,
-            //   category_id,
+            images: image_urls,
+            category_id,
             quantity
         });
 
         await newProduct.save();
 
-        res.status(201).json({success: true, message: 'Product created successfully', product: newProduct})
+        res.json({success: true, message: 'Product created successfully', product: newProduct})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 
@@ -81,10 +86,28 @@ async function createProduct (req, res) {
 async function getProducts (req, res) {
     try {
         const products = await Product.find().select('-__v')
-        res.status(200).json({success: true, products})
+        if (empty(products)) {
+            res.json({success: false, message: `No product found`})
+        }
+        res.json({success: true, message: products})
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
+    }
+}
+
+// function to get all products by a vendor
+async function getProductsByVendor (req, res) {
+    try {
+        const userId = req.user.id
+        const products = await Product.find({user_id: userId}).select('-__v')
+        if (empty(products)) {
+            return res.json({success: false, message: `You don't have a product yet`})
+        }
+        res.json({success: true, message: products})
+    } catch (error) {
+        console.log(error.message)
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 
@@ -95,13 +118,13 @@ async function getProductById (req, res) {
         const product = await Product.findById(productId, '-__v')
         // check if product exists
         if (!product) {
-            return res.status(404).json({success: false, message: 'Product not found'})
+            return res.json({success: false, message: 'Product not found'})
         }
-        res.status.json(200).json({success: true, product})
+        res.json({success: true, message: product})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 
@@ -112,16 +135,79 @@ async function updateProduct (req, res) {
         const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
-            return res.status(404).json({success: false, message: 'Product not found'})
+            return res.json({success: false, message: 'Product not found'})
         }
         const updatedProduct = await Product.findByIdAndUpdate(productId, req.body, {new: true})
-        res.status(200).json({success: false, product: updatedProduct})
+        res.json({success: false, product: updatedProduct})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
+
+// add a product image
+async function addProductImage (req, res) {
+    try {
+        const {productId} = req.params
+        const product = await Product.findById(productId)
+        // check if product exists
+        if (!product) {
+            return res.json({success: false, message: 'Product not found'})
+        }
+
+        // get the uploaded image url and update the database
+        if (req.file) {
+            const image_url = req.file.path
+            const updatedProduct = await Product.findByIdAndUpdate(productId, {$push: {images: image_url}}, {new: true})
+
+            if (!updatedProduct) {
+                return res.json({ success: false, message: 'Failed to update product' });
+            }
+
+            return res.json({success: true, message: 'Image added successfully'})
+
+        } else {
+            return res.json({success: false, message: 'No image provided'})
+        }
+    } catch (error) {
+        console.log(error.message)
+        res.json({success: false, message: 'Internal server error'})
+    }
+}
+
+// remove a product image
+async function removeProductImage (req, res) {
+    try {
+        const {productId} = req.params
+        const product = await Product.findById(productId)
+        // check if product exists
+        if (!product) {
+            return res.json({success: false, message: 'Product not found'})
+        }
+
+        // get the index of the image to be deleted from the request body
+        const deleteIndex = +req.body.deleteIndex
+
+        // check if the deleteIndex is valid and then delete the image by the index from the database
+        if (deleteIndex >= 0 && deleteIndex < product.images.length) {
+            const updatedProduct = await Product.findByIdAndUpdate(productId, {$pull: {images:product.images[deleteIndex]}}, {new: true})
+
+            if (!updatedProduct) {
+                return res.json({ success: false, message: 'Failed to update product' });
+            }
+            
+            return res.json({success: true, message: 'Image removed successfully'})
+        } else {
+            return res.json({success: false, message: 'Please provide a valid deleteIndex'})
+        }
+
+    } catch (error) {
+        console.log(error.message)
+        res.json({success: false, message: 'Internal server error'})
+    }
+}
+
 
 // DELETE
 async function deleteProduct (req, res) {
@@ -130,15 +216,75 @@ async function deleteProduct (req, res) {
         const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
-            return res.status(404).json({success: false, message: 'Product not found'})
+            return res.json({success: false, message: 'Product not found'})
         }
         await Product.findByIdAndDelete(productId)
-        res.status(200).json({success: true, message: 'Product deleted successfully'})
+        res.json({success: true, message: 'Product deleted successfully'})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).json({success: false, message: 'Internal server error'})
+        res.json({success: false, message: 'Internal server error'})
     }
 }
 
-module.exports = {createProduct, getProducts, getProductById, updateProduct, deleteProduct}
+// async function searchProducts (req, res) {
+//     try {
+//         // get the search query from the request body
+//         const query = req.body.query
+//         // validate request body
+//         if (!query) {
+//             return res.json({success: false, message: 'Please provide a search query'});
+//         }
+//         // find the products that match the search query (indexing has been set up in the product model and on atlas)
+//         const results = await Product.find({$text: {$search: query}})
+//         // check if query returns a search
+//         if (!results || results.length == 0) {
+//             return res.json({success: false, message: 'No result found'})
+//         }
+
+//         res.json({success: true, message: results})
+      
+//     } catch (error) {
+//         console.log(error.message)
+//         res.json({success: false, message: 'Internal server error'})
+//     }
+// }
+
+async function searchProducts(req, res) {
+    try {
+        // get the search query from the request body
+        const query = req.body.query;
+        // get the pagination parameters from the request body and set defaults
+        const page = +req.body.page || 1
+        const limit = +req.body.limit || 10
+
+        // validate the query in the request body
+        if (!query) {
+            return res.json({ success: false, message: 'Please provide a search query' });
+        }
+
+        // calculate the number of items to skip based on the page and limit
+        const skip = (page - 1) * limit;
+
+        // find the products that match the search query (indexing has been set up in the product model and on atlas); and apply pagination
+        const results = await Product.find({ $text: { $search: query } }).skip(skip).limit(limit);
+
+        // check if query returns a search result
+        if (!results || results.length === 0) {
+            return res.json({ success: false, message: 'No result found' });
+        }
+
+        // calculate the total number of documents in the product collection and use it to calculate the total pages
+        const totalCount = await Product.countDocuments({$text: {$search: query}});
+        const totalPages = Math.ceil(totalCount / limit);
+
+        // return the results array and the pagination details in the response body
+        res.json({success: true, message: {results, pagination: {page, limit, totalPages, totalCount}}})
+
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: 'Internal server error' });
+    }
+}
+
+module.exports = {createProduct, getProducts, getProductsByVendor, getProductById, updateProduct, addProductImage, removeProductImage, deleteProduct, searchProducts}
