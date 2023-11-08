@@ -39,9 +39,22 @@ async function initiatePayment (req, res) {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
+        .then(async response => {
             console.log(response.data)
             console.log('tx_ref:', paymentData.tx_ref);
+            // create a payment record in the database with status pending
+            const payment = new PaymentModel({
+                user_id,
+                order_id: orderId,
+                transaction_id: paymentData.tx_ref,
+                payment_gateway: 'Flutterwave',
+                payment_method: 'Bank transfer',
+                amount: order.amount,
+                currency: 'NGN',
+                status: 'pending'
+            })
+            await payment.save()
+
             res.json({success: true, message: 'Order created and payment initiated successfully', orderId, transactionId: paymentData.tx_ref, paymentInitiation: response.data})
         })
         .catch(error => {
@@ -79,65 +92,27 @@ async function listenWebhook (req, res) {
         const order = await OrderModel.findOne({tx_ref})
         const orderId = order._id
 
-        // // check if payment was successful
-        // if (payload.data.status !== 'successful') {
-        //     console.log('Payment unsuccessful')
-        // }
         // create a payment record in the database
-        
-
-        const payment = await PaymentModel.findOne({transaction_id})
+        const payment = await PaymentModel.findOne({transaction_id: tx_ref})
         const payment_id = payment._id
 
         // check if payment was successful
         if (payload.data.status === 'successful' && payload.data.charged_amount >= payload.data.amount) {
-            const paymentData = {
-                user_id: userId,
-                order_id: orderId,
-                transaction_id: payload.data.tx_ref,
-                payment_gateway: 'Flutterwave',
-                payment_method: 'Bank transfer',
-                amount: payload.data.amount,
-                currency: payload.data.currency,
-                status: 'successful'
-            }
-            await PaymentModel.create(paymentData)
             
-            // // update payment status in the database to completed
-            // await PaymentModel.findByIdAndUpdate(payment_id, {status: 'completed'}, {new: true})
+            
+            // update payment status in the database to completed
+            await PaymentModel.findByIdAndUpdate(payment_id, {status: 'completed'}, {new: true})
+
             
             // update order status in the database to completed
             await OrderModel.findByIdAndUpdate(orderId, {completed: true}, {new: true})
 
         } else if (payload.data.status === 'failed') {
-            const paymentData = {
-                user_id: userId,
-                order_id: orderId,
-                transaction_id: payload.data.tx_ref,
-                payment_gateway: 'Flutterwave',
-                payment_method: 'Bank transfer',
-                amount: payload.data.amount,
-                currency: payload.data.currency,
-                status: 'failed'
-            }
-            await PaymentModel.create(paymentData)
-            // // update payment status in the database to failed
-            // await PaymentModel.findByIdAndUpdate(payment_id, {status: 'failed'}, {new: true})
 
-        } else {
-            const paymentData = {
-                user_id: userId,
-                order_id: orderId,
-                transaction_id: payload.data.tx_ref,
-                payment_gateway: 'Flutterwave',
-                payment_method: 'Bank transfer',
-                amount: payload.data.amount,
-                currency: payload.data.currency,
-                status: 'pending'
-            }
-            await PaymentModel.create(paymentData)
+            // update payment status in the database to failed
+            await PaymentModel.findByIdAndUpdate(payment_id, {status: 'failed'}, {new: true})
+
         }
-
 
         // acknowledge receipt of webhook by returning 200 status code to flutterwave
         res.status(200)
@@ -183,7 +158,7 @@ async function retryPayment (req, res) {
         .then(response => {
             console.log(response.data)
             console.log('tx_ref:', paymentData.tx_ref);
-            res.json({success: true, message: 'Order created and payment initiated successfully', orderId, transaction_id: paymentData.tx_ref, paymentInitiation: response.data})
+            res.json({success: true, message: 'Payment initiated successfully', transaction_id: paymentData.tx_ref, paymentInitiation: response.data})
         })
         .catch(error => {
             console.log(error);
