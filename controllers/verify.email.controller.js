@@ -37,7 +37,7 @@ async function sendConfirmationMail(req, res) {
     const emailOption = {
         to: user.email,
         from: "Aphia",
-        subject: "Registration Successful",
+        subject: "Verification Successful",
         html: await buildEmailTemplate("confirmation.ejs", user),
       };
       await sendMail(emailOption, res);
