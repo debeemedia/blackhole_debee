@@ -15,7 +15,7 @@
 // const profile_storage = new CloudinaryStorage({
 //     cloudinary: cloudinary,
 //     params: {
-//         folder: 'aphia-dev/profile-images',
+//         folder: 'aphia/profile-images',
 //         transformation: [{width: 500, height: 500, crop: 'limit'}]
 //     }
 // })
@@ -36,7 +36,7 @@
 // const product_storage = new CloudinaryStorage({
 //     cloudinary: cloudinary,
 //     params: {
-//         folder: 'aphia-dev/product-images',
+//         folder: 'aphia/product-images',
 //         transformation: [{width: 1000, height: 1000, crop: 'limit'}]
 //     }
 // })
@@ -90,7 +90,7 @@ function createMulterInstance (folder, transformation) {
       }
   })
 }
-const profile_upload = createMulterInstance('aphia-dev/profile-images', [{width: 500, height: 500, crop: 'limit'}])
-const product_upload = createMulterInstance('aphia-dev/product-images', [{width: 1000, height: 1000, crop: 'limit'}])
+const profile_upload = createMulterInstance('aphia/profile-images', [{width: 500, height: 500, crop: 'limit'}])
+const product_upload = createMulterInstance('aphia/product-images', [{width: 1000, height: 1000, crop: 'limit'}])
 
 module.exports = {profile_upload, product_upload}
