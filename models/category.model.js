@@ -5,7 +5,8 @@ const Products = require('./product.model')
 const categorySchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     description: {
         type: String
@@ -18,7 +19,7 @@ const categorySchema = new mongoose.Schema({
 
 categorySchema.pre('findByIdAndDelete', async function (next) {
     category = this
-    Products.deleteMany({category: category._id})
+    await Products.deleteMany({category_id: category._id})
     next()
 })
 

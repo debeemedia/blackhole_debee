@@ -1,25 +1,25 @@
 const ProductModel = require("../models/product.model");
 
-async function checkVendorOwnership (req, res) {
+async function checkVendorOwnership (req, res, next) {
     try {
         // destructure product id from req.params
-        const {product_id} = req.params
+        const {productId} = req.params
         // find the product by id
-        const product = ProductModel.findById(product_id)
+        const product = await ProductModel.findById(productId)
         // check if the product exists
         if (!product) {
-            return res.status(404).json({success: false, message: 'Product not found'})
+            return res.json({success: false, message: 'Product not found'})
         }
         // check if the user is the owner of the product
         if (product.user_id == req.user.id) {
             next()
         } else {
-            res.status(403).json({success: false, message: 'Access Denied. You are not the vendor of this product'})
+            res.json({success: false, message: 'Access Denied. You are not the vendor of this product'})
         }
 
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({success: false, message: 'Internal Server Error'})
+        res.json({success: false, message: 'Internal Server Error'})
     }
 }
 

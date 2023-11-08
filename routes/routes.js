@@ -6,6 +6,9 @@ const { reviewRouter } = require('./review.routes')
 const { faqRouter } = require('./faq.routes')
 const { orderRouter } = require('./order.routes')
 const { userRouter } = require('./user.routes')
+const { favoritesRouter } = require('./favorites.routes')
+const { paymentRouter } = require('./payment.routes')
+const { flashRouter } = require('./flash.routes')
 const router = express.Router()
 
 
@@ -15,6 +18,9 @@ router.use('/products', productRouter)
 router.use('/reviews', reviewRouter )
 router.use('/faqs', faqRouter)
 router.use('/orders', orderRouter)
+router.use('/favorites', favoritesRouter)
+router.use(paymentRouter)
+router.use('/flash', flashRouter)
 
 
 module.exports = router
