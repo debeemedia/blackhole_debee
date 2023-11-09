@@ -41,7 +41,7 @@ const productSchema = new mongoose.Schema(
     }, {timestamps: true}
 )
 
-productSchema.pre('findByIdAndDelete', async function (next) {
+productSchema.pre('findByIdAndDelete', { document: true }, async function (next) {
     product = this
     await Favorites.deleteMany({product: product._id})
     await ReviewModel.deleteMany({product_id: product._id})

@@ -79,7 +79,7 @@ userSchema.pre("save", async function (next) {
     }
 });
 
-userSchema.pre("findByIdAndDelete", async function (next) {
+userSchema.pre("findByIdAndDelete", { document: true }, async function (next) {
     try {
         const user = this;
         await OrderModel.deleteMany({ user_id: user._id });
