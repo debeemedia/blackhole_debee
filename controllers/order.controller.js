@@ -152,6 +152,38 @@ async function getAllOrders(req, res) {
     }   
 }
 
+async function deleteOrder (req, res) {
+    try {
+        // get id of logged-in user
+        const userId = req.user.id
+        // get order id from req.params
+        const {orderId} = req.params
+        
+        if (empty(orderId)) {
+            return res.json({success: false, message: 'Please provide Order ID'})
+        }
+        // check if order exists
+        const order = await OrderModel.findById(orderId).select('-__v')
+        if (empty(order)) {
+            return res.json({success: false, message: 'Order is not found'})
+        }
+        // check if user is the one who made the order
+        if (order.user_id != userId) {
+            return res.json({success: false, message: 'You are not authorized to access this resource'})
+        }
+        // check the order's completed status and delete if false
+        if (order.completed == false) {
+            await OrderModel.findByIdAndDelete(orderId)
+            return res.json({success: true, message: 'Order deleted successfully'})
+
+        } else if (order.completed == true) {
+            return res.json({success: false, message: 'You cannot delete a completed order'})
+        }
+    } catch (error) {
+        res.json({success: false, error: error.message});
+    }
+}
+
 async function markDelivered(req, res) {
     try {
     const {delivery_date, completed} = req.body
@@ -191,5 +223,6 @@ module.exports = {
     createOrder,
     getAllOrdersByUser,
     getAllOrders,
-    getAnOrderByUser
+    getAnOrderByUser,
+    deleteOrder
 }
