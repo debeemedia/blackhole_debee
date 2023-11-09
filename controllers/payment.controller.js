@@ -8,16 +8,150 @@ const OrderModel = require('../models/order.model');
 const { empty } = require("../utils/helpers");
 const base_api_url = 'https://api.flutterwave.com/v3'
 
-// function to initiate payment
-async function initiatePayment (req, res) {
+
+// I REFACTORED initiatePayment and retryPayment to initiatePaymentCommon
+
+// // function to initiate payment
+// async function initiatePayment (req, res) {
+//     try {
+//         // find the id of the logged-in user
+//         const user_id = req.user.id
+//         // find the user from the database
+//         const user = await UserModel.findById(user_id)
+//         // get the order from the req.order passed in the createOrder middleware
+//         const order = req.order
+//         const orderId = order._id
+
+//         // payment details
+//         const paymentData = {
+//             amount: order.amount,
+//             currency: 'NGN',
+//             email: user.email,
+//             phone_number: user.phone_number,
+//             fullname: `${user.first_name} ${user.last_name}`,
+//             tx_ref: `TXN-${uuidv4()}`,
+//             narration: 'Aphia'
+//         }
+
+//         // update the order with the tx_ref
+//         await OrderModel.findByIdAndUpdate(orderId, {tx_ref: paymentData.tx_ref}, {new: true})
+
+//         // make a post request to flutterwave api endpoint for transfer charge
+//         axios.post(`${base_api_url}/charges?type=bank_transfer`, JSON.stringify(paymentData), {
+//             headers: {
+//                 'Authorization': `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}`,
+//                 'Content-Type': 'application/json'
+//             }
+//         })
+//         .then(async response => {
+//             console.log(response.data)
+//             console.log('tx_ref:', paymentData.tx_ref);
+//             // create a payment record in the database with status pending
+//             const payment = new PaymentModel({
+//                 user_id,
+//                 order_id: orderId,
+//                 transaction_id: paymentData.tx_ref,
+//                 payment_gateway: 'Flutterwave',
+//                 payment_method: 'Bank transfer',
+//                 amount: order.amount,
+//                 currency: 'NGN',
+//                 status: 'pending'
+//             })
+//             await payment.save()
+
+//             res.json({success: true, message: 'Order created and payment initiated successfully', orderId, transactionId: paymentData.tx_ref, paymentInitiation: response.data})
+//         })
+//         .catch(error => {
+//             console.log(error);
+//             res.json({success: false, message: 'Payment initiation unsuccessful'})
+//         })
+        
+//     } catch (error) {
+//         console.log(error.message);
+//         res.json({success: true, message: 'Internal server error'})
+//     }
+// }
+
+
+// // function to retry payment
+// async function retryPayment (req, res) {
+//     try {
+//         // find the id of the logged-in user
+//         const user_id = req.user.id
+//         // find the user from the database
+//         const user = await UserModel.findById(user_id)
+//         // destructure the order id from the req.params and find the order
+//         const {orderId} = req.params
+//         if (empty(orderId)) {
+//             return res.json({success: false, message: 'Please provide order ID'})
+//         }
+//         const order = await OrderModel.findById(orderId)
+//         if (empty(order)) {
+//             return res.json({success: false, message: 'Order not found'})
+//         }
+
+//         // payment details
+//         const paymentData = {
+//             amount: order.amount,
+//             currency: 'NGN',
+//             email: user.email,
+//             phone_number: user.phone_number,
+//             fullname: `${user.first_name} ${user.last_name}`,
+//             tx_ref: `TXN-${uuidv4()}`,
+//             narration: 'Aphia'
+//         }
+
+//         // update the order with the tx_ref
+//         await OrderModel.findByIdAndUpdate(orderId, {tx_ref: paymentData.tx_ref}, {new: true})
+
+//         // make a post request to flutterwave api endpoint for transfer charge
+//         axios.post(`${base_api_url}/charges?type=bank_transfer`, JSON.stringify(paymentData), {
+//             headers: {
+//                 'Authorization': `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}`,
+//                 'Content-Type': 'application/json'
+//             }
+//         })
+//         .then(async response => {
+//             console.log(response.data)
+//             console.log('tx_ref:', paymentData.tx_ref);
+//             // create a payment record in the database with status pending
+//             const payment = new PaymentModel({
+//                 user_id,
+//                 order_id: orderId,
+//                 transaction_id: paymentData.tx_ref,
+//                 payment_gateway: 'Flutterwave',
+//                 payment_method: 'Bank transfer',
+//                 amount: order.amount,
+//                 currency: 'NGN',
+//                 status: 'pending'
+//             })
+//             await payment.save()
+
+//             res.json({success: true, message: 'Payment initiated successfully', transactionId: paymentData.tx_ref, paymentInitiation: response.data})
+//         })
+//         .catch(error => {
+//             console.log(error);
+//             res.json({success: false, message: 'Payment initiation unsuccessful'})
+//         })
+        
+//     } catch (error) {
+//         console.log(error.message);
+//         res.json({success: true, message: 'Internal server error'})
+//     }
+// }
+
+// function to handle payment initiation and payment retry
+async function initiatePaymentCommon(req, res, orderId) {
     try {
         // find the id of the logged-in user
-        const user_id = req.user.id
+        const user_id = req.user.id;
         // find the user from the database
-        const user = await UserModel.findById(user_id)
-        // get the order from the req.order passed in the createOrder middleware
-        const order = req.order
-        const orderId = order._id
+        const user = await UserModel.findById(user_id);
+        // find the order
+        const order = await OrderModel.findById(orderId);
+        if (!order) {
+            return res.json({ success: false, message: 'Order not found' });
+        }
 
         // payment details
         const paymentData = {
@@ -28,48 +162,71 @@ async function initiatePayment (req, res) {
             fullname: `${user.first_name} ${user.last_name}`,
             tx_ref: `TXN-${uuidv4()}`,
             narration: 'Aphia'
-        }
+        };
 
         // update the order with the tx_ref
-        await OrderModel.findByIdAndUpdate(orderId, {tx_ref: paymentData.tx_ref}, {new: true})
+        await OrderModel.findByIdAndUpdate(orderId, { tx_ref: paymentData.tx_ref }, { new: true });
 
         // make a post request to flutterwave api endpoint for transfer charge
-        axios.post(`${base_api_url}/charges?type=bank_transfer`, JSON.stringify(paymentData), {
+        const response = await axios.post(`${base_api_url}/charges?type=bank_transfer`, JSON.stringify(paymentData), {
             headers: {
                 'Authorization': `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}`,
                 'Content-Type': 'application/json'
             }
-        })
-        .then(async response => {
-            console.log(response.data)
-            console.log('tx_ref:', paymentData.tx_ref);
-            // create a payment record in the database with status pending
-            const payment = new PaymentModel({
-                user_id,
-                order_id: orderId,
-                transaction_id: paymentData.tx_ref,
-                payment_gateway: 'Flutterwave',
-                payment_method: 'Bank transfer',
-                amount: order.amount,
-                currency: 'NGN',
-                status: 'pending'
-            })
-            await payment.save()
+        });
 
-            res.json({success: true, message: 'Order created and payment initiated successfully', orderId, transactionId: paymentData.tx_ref, paymentInitiation: response.data})
-        })
-        .catch(error => {
-            console.log(error);
-            res.json({success: false, message: 'Payment initiation unsuccessful'})
-        })
-        
+        console.log(response.data);
+        console.log('tx_ref:', paymentData.tx_ref);
+        // create a payment record in the database with status pending
+        const payment = new PaymentModel({
+            user_id,
+            order_id: orderId,
+            transaction_id: paymentData.tx_ref,
+            payment_gateway: 'Flutterwave',
+            payment_method: 'Bank transfer',
+            amount: order.amount,
+            currency: 'NGN',
+            status: 'pending'
+        });
+
+        await payment.save();
+
+        return {
+            success: true,
+            message: 'Order created and payment initiated successfully',
+            orderId,
+            transactionId: paymentData.tx_ref,
+            paymentInitiation: response.data
+        };
     } catch (error) {
         console.log(error.message);
-        res.json({success: true, message: 'Internal server error'})
+        return { success: false, message: 'Payment initiation unsuccessful' };
     }
 }
 
-// webhook for flutterwave to listen for payment and make post request
+// function to initiate payment
+async function initiatePayment(req, res) {
+    const orderId = req.order._id;
+    const result = await initiatePaymentCommon(req, res, orderId);
+    res.json(result);
+}
+
+// function to retry payment
+async function retryPayment(req, res) {
+    const { orderId } = req.params;
+    if (!empty(orderId)) {
+        const result = await initiatePaymentCommon(req, res, orderId);
+        // adjusting the response message for retryPayment
+        result.message = 'Payment initiated successfully';
+        // removing orderId from the response for retryPayment
+        delete result.orderId;
+        res.json(result);
+    } else {
+        res.json({ success: false, message: 'Please provide order ID' });
+    }
+}
+
+// webhook for flutterwave to listen for payment and make post request with payload; then handle order and payment records in the database based on payload status
 async function listenWebhook (req, res) {
     try {
         // use secret hash in the webhook
@@ -100,11 +257,9 @@ async function listenWebhook (req, res) {
         // check if payment was successful
         if (payload.data.status === 'successful' && payload.data.charged_amount >= payload.data.amount) {
             
-            
             // update payment status in the database to completed
             await PaymentModel.findByIdAndUpdate(payment_id, {status: 'completed'}, {new: true})
 
-            
             // update order status in the database to completed
             await OrderModel.findByIdAndUpdate(orderId, {completed: true}, {new: true})
 
@@ -124,67 +279,6 @@ async function listenWebhook (req, res) {
     }
 }
 
-// function to retry payment
-async function retryPayment (req, res) {
-    try {
-        // find the id of the logged-in user
-        const user_id = req.user.id
-        // find the user from the database
-        const user = await UserModel.findById(user_id)
-        // destructure the order id from the req.params and find the order
-        const {orderId} = req.params
-        const order = await OrderModel.findById(orderId)
-
-        // payment details
-        const paymentData = {
-            amount: order.amount,
-            currency: 'NGN',
-            email: user.email,
-            phone_number: user.phone_number,
-            fullname: `${user.first_name} ${user.last_name}`,
-            tx_ref: `TXN-${uuidv4()}`,
-            narration: 'Aphia'
-        }
-
-        // update the order with the tx_ref
-        await OrderModel.findByIdAndUpdate(orderId, {tx_ref: paymentData.tx_ref}, {new: true})
-
-        // make a post request to flutterwave api endpoint for transfer charge
-        axios.post(`${base_api_url}/charges?type=bank_transfer`, JSON.stringify(paymentData), {
-            headers: {
-                'Authorization': `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}`,
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(async response => {
-            console.log(response.data)
-            console.log('tx_ref:', paymentData.tx_ref);
-            // create a payment record in the database with status pending
-            const payment = new PaymentModel({
-                user_id,
-                order_id: orderId,
-                transaction_id: paymentData.tx_ref,
-                payment_gateway: 'Flutterwave',
-                payment_method: 'Bank transfer',
-                amount: order.amount,
-                currency: 'NGN',
-                status: 'pending'
-            })
-            await payment.save()
-
-            res.json({success: true, message: 'Payment initiated successfully', transactionId: paymentData.tx_ref, paymentInitiation: response.data})
-        })
-        .catch(error => {
-            console.log(error);
-            res.json({success: false, message: 'Payment initiation unsuccessful'})
-        })
-        
-    } catch (error) {
-        console.log(error.message);
-        res.json({success: true, message: 'Internal server error'})
-    }
-}
-
 // function to get a payment
 async function getPayment (req, res){
     try {
@@ -198,7 +292,7 @@ async function getPayment (req, res){
         // find the payment with the transaction id
         const payment = await PaymentModel.findOne({transaction_id: transactionId}).select('-__v')
         if (empty(payment)) {
-            return res.json({success: false, message: 'Payment is not found'})
+            return res.json({success: false, message: 'Payment not found'})
         }
 
         if (payment.user_id != user_id) {
