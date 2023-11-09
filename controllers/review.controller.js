@@ -2,7 +2,8 @@
 const {ReviewModel} = require('../models/review.model')
 const ProductModel = require('../models/product.model')
 const UserModel = require('../models/user.model')
-
+const { empty } = require("../utils/helpers")
+const validateData = require("../utils/validate")
 
 async function addReview(req,res){
     try {
@@ -10,8 +11,23 @@ async function addReview(req,res){
         const {productId} = req.params
         const {comment, rating} = req.body
 
-        if (!productId) {
+        if (empty(productId)) {
             return res.json({success: false, message: 'Please provide product ID'})
+        }
+
+        const error = {};
+        const validateRule = {
+            comment: "string|required",
+            rating: "required"
+        };
+        const validateMessage = {
+            required: ":attribute is required",
+            string: ":attribute must be a string"
+        };
+
+        const validateResult = validateData(req.body, validateRule, validateMessage);
+        if (!validateResult.success) {
+            return res.json(validateResult.data);
         }
 
         const product = await ProductModel.findById(productId)
@@ -19,7 +35,16 @@ async function addReview(req,res){
             return res.json({success: false, message: 'Product not found'})
         }
 
-        const newReview = new ReviewModel({product_id: productId, user_id: id, comment, rating})
+        if (rating < 0.5 || rating > 5) {
+            return res.json({success: false, message: 'Rating must be from 1 to 5'})
+        }
+
+        const existingReview = await ReviewModel.findOne({product_id: productId, user_id: id})
+        if (existingReview) {
+            return res.json({success: false, message: 'You have already reviewed this product'})
+        }
+
+        const newReview = new ReviewModel({product_id: productId, user_id: id, comment, rating: +rating})
         await newReview.save()
 
         res.json({success: true, message: 'Review added successfully'})
@@ -92,7 +117,10 @@ async function updateReview(req,res){
         }
 
         if (rating) {
-            updateDetails.rating = rating
+            if (rating < 0.5 || rating > 5) {
+                return res.json({success: false, message: 'Rating must be from 1 to 5'})
+            }
+            updateDetails.rating = +rating
         }
 
         const updatedReview = await ReviewModel.findByIdAndUpdate(reviewId, updateDetails, {new: true})
