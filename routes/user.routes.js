@@ -5,7 +5,6 @@ const { getUsers, createUser, updateUser, deleteUser, resendMail } = require('..
 const { createVendor } = require('../controllers/vendor.controller')
 const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_TOKEN, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET, ROUTE_USER_DELETE, ROUTE_RESEND, ROUTE_FORGOT_PASSWORD, ROUTE_RESET_PASSWORD } = require('../lib/page-route')
 const { verifyEmail, sendConfirmationMail } = require('../controllers/verify.email.controller')
-const { issueNewToken } = require('../middleware/issue.token')
 const { login } = require('../controllers/login.controller')
 const { logout } = require('../controllers/logout.controller')
 const { authenticate } = require('../middleware/auth')
@@ -25,11 +24,8 @@ router.post(ROUTE_VENDOR_REGISTER, profile_upload.single('profile_image'), creat
 // verify email
 router.get(ROUTE_VERIFY, verifyEmail, sendConfirmationMail)
 
-//login
+// login
 router.post(ROUTE_USER_LOGIN, login)
-
-// route to issue new access token
-router.post(ROUTE_TOKEN, issueNewToken)
 
 // get all users
 router.get(ROUTE_USERS_GET, getUsers)

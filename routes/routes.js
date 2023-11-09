@@ -19,7 +19,7 @@ router.use('/reviews', reviewRouter )
 router.use('/faqs', faqRouter)
 router.use('/orders', orderRouter)
 router.use('/favorites', favoritesRouter)
-router.use(paymentRouter)
+router.use('/payments', paymentRouter)
 router.use('/flash', flashRouter)
 
 
