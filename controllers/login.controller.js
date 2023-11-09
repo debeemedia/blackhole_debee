@@ -31,7 +31,7 @@ async function login (req, res) {
                 // set refresh token in cookie
                 res.cookie('jwt', refreshToken, {httpOnly: false, sameSite: 'None', secure: false, maxAge: 60 * 60 * 1000})
 
-                res.json({success: true, message: accessToken})
+                res.json({success: true, message: accessToken, refresh_token: refreshToken})
 
             } else {
                 return res.json({success: false, message: 'Incorrect Credentials'})
