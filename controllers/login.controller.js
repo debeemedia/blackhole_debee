@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken')
 
 async function login (req, res) {
     try {
-        console.log(req.headers.origin);
         const {email, username, password} = req.body
         // allow user to login with either email or username and password
         if(!password && (!email || !username)) {
@@ -23,15 +22,11 @@ async function login (req, res) {
                 if (!user.verified) {
                     return res.json({success: false, message: 'user is not verified'})
                 }
-                res.header('Access-Control-Allow-Origin', req.headers.origin)
-                // issue access token
-                const accessToken = jwt.sign({id: user._id, email: user.email, username: user.username, role: user.role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'})
-                // issue refresh token
-                const refreshToken = jwt.sign({id: user._id, email: user.email, username: user.username, role: user.role}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1h'})
-                // set refresh token in cookie
-                res.cookie('jwt', refreshToken, {httpOnly: false, sameSite: 'None', secure: false, maxAge: 60 * 60 * 1000})
 
-                res.json({success: true, message: accessToken, refresh_token: refreshToken})
+                // issue token
+                const token = jwt.sign({id: user._id, email: user.email, username: user.username, role: user.role}, process.env.TOKEN_SECRET, {expiresIn: '2h'})
+
+                res.json({success: true, message: token})
 
             } else {
                 return res.json({success: false, message: 'Incorrect Credentials'})
