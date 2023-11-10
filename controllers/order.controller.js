@@ -1,6 +1,7 @@
 const OrderModel = require("../models/order.model");
 const validateData = require("../utils/validate");
 const { empty } = require("../utils/helpers");
+const PaymentModel = require("../models/payment.model");
 
 async function createOrder(req, res, next) {
     const user_id = req.user.id
@@ -173,6 +174,7 @@ async function deleteOrder (req, res) {
         }
         // check the order's completed status and delete if false
         if (order.completed == false) {
+            await PaymentModel.deleteMany({order_id: orderId})
             await OrderModel.findByIdAndDelete(orderId)
             return res.json({success: true, message: 'Order deleted successfully'})
 

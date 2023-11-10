@@ -63,7 +63,7 @@ const base_api_url = 'https://api.flutterwave.com/v3'
 //         })
 //         .catch(error => {
 //             console.log(error);
-//             res.json({success: false, message: 'Payment initiation unsuccessful'})
+//             res.json({success: false, message: 'Payment initiation unsuccessful', orderId})
 //         })
         
 //     } catch (error) {
@@ -200,7 +200,7 @@ async function initiatePaymentCommon(req, res, orderId) {
         };
     } catch (error) {
         console.log(error.message);
-        return { success: false, message: 'Payment initiation unsuccessful' };
+        return { success: false, message: 'Payment initiation unsuccessful', orderId };
     }
 }
 
