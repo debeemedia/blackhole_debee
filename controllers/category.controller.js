@@ -38,7 +38,7 @@ async function deleteCategory(req,res){
             return res.json({success: false, message: 'You are not authorized to perform this action'})
         }
 
-        const deletedCategory = await CategoryModel.findByIdAndDelete(categoryId)
+        const deletedCategory = await CategoryModel.findOneAndDelete({_id: categoryId})
         
         res.json({success: true, message: 'Category deleted successfully'})
       

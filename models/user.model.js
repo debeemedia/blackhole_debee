@@ -4,6 +4,7 @@ const OrderModel = require("./order.model");
 const { ReviewModel } = require("./review.model");
 const PaymentModel = require("./payment.model");
 const Favourite = require("./favourite.model");
+const { FlashModel } = require("./flashSale.model");
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -79,13 +80,14 @@ userSchema.pre("save", async function (next) {
     }
 });
 
-userSchema.pre("findByIdAndDelete", { document: true }, async function (next) {
+userSchema.pre("findOneAndDelete", async function (next) {
     try {
         const user = this;
         await OrderModel.deleteMany({ user_id: user._id });
         await ReviewModel.deleteMany({user_id: user._id})
         await PaymentModel.deleteMany({user_id: user._id})
         await Favourite.deleteMany({user_id: user._id})
+        await FlashModel.deleteMany({user_id: user._id})
         next();
     } catch (error) {
         return next(error);

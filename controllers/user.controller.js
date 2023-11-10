@@ -129,7 +129,7 @@ async function deleteUser(req, res) {
       return res.json({success: false, message: 'Something went wrong. Please try again'})
   }
   
-  await UserModel.findByIdAndDelete(userId)
+  await UserModel.findOneAndDelete({_id: userId})
 
   res.json({ success: true, message: "user deleted successfully" });
   } catch (error) {
