@@ -1,5 +1,8 @@
-const CategoryModel = require("../models/category.model")
-const Product = require("../models/product.model")
+const CategoryModel = require("../models/category.model");
+const Favourite = require("../models/favourite.model");
+const { FlashModel } = require("../models/flashSale.model");
+const Product = require("../models/product.model");
+const { ReviewModel } = require("../models/review.model");
 const { empty } = require("../utils/helpers");
 const validateData = require("../utils/validate");
 
@@ -218,6 +221,11 @@ async function deleteProduct (req, res) {
         if (!product) {
             return res.json({success: false, message: 'Product not found'})
         }
+
+        await Favourite.deleteMany({product: product._id})
+        await ReviewModel.deleteMany({product_id: product._id})
+        await FlashModel.deleteOne({product: product._id})
+
         await Product.findOneAndDelete({_id: productId})
         res.json({success: true, message: 'Product deleted successfully'})
 
