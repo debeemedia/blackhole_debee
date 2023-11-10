@@ -218,7 +218,7 @@ async function deleteProduct (req, res) {
         if (!product) {
             return res.json({success: false, message: 'Product not found'})
         }
-        await Product.findByIdAndDelete(productId)
+        await Product.findOneAndDelete({_id: productId})
         res.json({success: true, message: 'Product deleted successfully'})
 
     } catch (error) {

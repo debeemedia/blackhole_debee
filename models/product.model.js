@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Favorites = require('./favourite.model')
 const { ReviewModel } = require('./review.model')
+const { FlashModel } = require('./flashSale.model')
 
 const productSchema = new mongoose.Schema(
     {
@@ -41,10 +42,11 @@ const productSchema = new mongoose.Schema(
     }, {timestamps: true}
 )
 
-productSchema.pre('findByIdAndDelete', { document: true }, async function (next) {
+productSchema.pre('findOneAndDelete', async function (next) {
     product = this
     await Favorites.deleteMany({product: product._id})
     await ReviewModel.deleteMany({product_id: product._id})
+    await FlashModel.deleteOne({product: product._id})
     next()
 })
 

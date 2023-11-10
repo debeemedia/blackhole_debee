@@ -17,7 +17,7 @@ const categorySchema = new mongoose.Schema({
     }
 })
 
-categorySchema.pre('findByIdAndDelete',{ document: true }, async function (next) {
+categorySchema.pre('findOneAndDelete', async function (next) {
     category = this
     await Products.deleteMany({category_id: category._id})
     next()
