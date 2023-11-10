@@ -1,3 +1,9 @@
+const Favourite = require("../models/favourite.model");
+const { FlashModel } = require("../models/flashSale.model");
+const OrderModel = require("../models/order.model");
+const PaymentModel = require("../models/payment.model");
+const ProductModel = require("../models/product.model");
+const { ReviewModel } = require("../models/review.model");
 const UserModel = require("../models/user.model");
 const { empty } = require("../utils/helpers");
 const { sendMail, buildEmailTemplate } = require("../utils/mail");
@@ -128,6 +134,12 @@ async function deleteUser(req, res) {
   if(empty(userId)){
       return res.json({success: false, message: 'Something went wrong. Please try again'})
   }
+  await ProductModel.deleteMany({user_id: userId})
+  await OrderModel.deleteMany({ user_id: userId });
+  await ReviewModel.deleteMany({user_id: userId})
+  await PaymentModel.deleteMany({user_id: userId})
+  await Favourite.deleteMany({user_id: userId})
+  await FlashModel.deleteMany({user_id: userId})
   
   await UserModel.findOneAndDelete({_id: userId})
 

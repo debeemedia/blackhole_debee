@@ -80,19 +80,5 @@ userSchema.pre("save", async function (next) {
     }
 });
 
-userSchema.pre("findOneAndDelete", async function (next) {
-    try {
-        const user = this;
-        await OrderModel.deleteMany({ user_id: user._id });
-        await ReviewModel.deleteMany({user_id: user._id})
-        await PaymentModel.deleteMany({user_id: user._id})
-        await Favourite.deleteMany({user_id: user._id})
-        await FlashModel.deleteMany({user_id: user._id})
-        next();
-    } catch (error) {
-        return next(error);
-    }
-});
-
 const UserModel = mongoose.model("User", userSchema);
 module.exports = UserModel;

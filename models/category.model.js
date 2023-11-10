@@ -17,11 +17,6 @@ const categorySchema = new mongoose.Schema({
     }
 })
 
-categorySchema.pre('findOneAndDelete', async function (next) {
-    category = this
-    await Products.deleteMany({category_id: category._id})
-    next()
-})
 
 const CategoryModel = mongoose.model('Categories', categorySchema)
 module.exports = CategoryModel

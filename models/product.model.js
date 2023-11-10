@@ -42,14 +42,6 @@ const productSchema = new mongoose.Schema(
     }, {timestamps: true}
 )
 
-productSchema.pre('findOneAndDelete', async function (next) {
-    product = this
-    await Favorites.deleteMany({product: product._id})
-    await ReviewModel.deleteMany({product_id: product._id})
-    await FlashModel.deleteOne({product: product._id})
-    next()
-})
-
 // Create text indexes (for search) // NB: must also be set up on atlas
 productSchema.index({ name: 'text', description: 'text' });
 
