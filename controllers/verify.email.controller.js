@@ -42,7 +42,8 @@ async function sendConfirmationMail(req, res) {
       };
       await sendMail(emailOption, res);
 
-      res.json({success: true, message: 'User verified successfully'})
+    //   res.json({success: true, message: 'User verified successfully'})
+    res.redirect(`https://aphia-stores.vercel.app/user/confirmation`)
 }
 
 module.exports = {verifyEmail, sendConfirmationMail}
