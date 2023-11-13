@@ -1,5 +1,8 @@
-const CategoryModel = require("../models/category.model")
-const Product = require("../models/product.model")
+const CategoryModel = require("../models/category.model");
+const Favourite = require("../models/favourite.model");
+const { FlashModel } = require("../models/flashSale.model");
+const Product = require("../models/product.model");
+const { ReviewModel } = require("../models/review.model");
 const { empty } = require("../utils/helpers");
 const validateData = require("../utils/validate");
 
@@ -131,14 +134,23 @@ async function getProductById (req, res) {
 // UPDATE
 async function updateProduct (req, res) {
     try {
+        const {name, description, price, quantity} = req.body;
         const {productId} = req.params
+        if (!productId) {
+            return res.json({success: false, message: "Please provide productId"})
+        }
         const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
             return res.json({success: false, message: 'Product not found'})
         }
-        const updatedProduct = await Product.findByIdAndUpdate(productId, req.body, {new: true})
-        res.json({success: false, product: updatedProduct})
+        if (!empty(name)) product.name = name;
+        if (!empty(description)) product.description = description;
+        if (!empty(price)) product.price = price;
+        if (!empty(quantity)) product.quantity = quantity;
+      
+        await product.save()
+        res.json({success: true, message: 'Product updated successfully'})
 
     } catch (error) {
         console.log(error.message)
@@ -150,6 +162,9 @@ async function updateProduct (req, res) {
 async function addProductImage (req, res) {
     try {
         const {productId} = req.params
+        if (!productId) {
+            return res.json({success: false, message: "Please provide productId"})
+        }
         const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
@@ -162,7 +177,7 @@ async function addProductImage (req, res) {
             const updatedProduct = await Product.findByIdAndUpdate(productId, {$push: {images: image_url}}, {new: true})
 
             if (!updatedProduct) {
-                return res.json({ success: false, message: 'Failed to update product' });
+                return res.json({ success: false, message: 'Failed to update product images' });
             }
 
             return res.json({success: true, message: 'Image added successfully'})
@@ -180,6 +195,9 @@ async function addProductImage (req, res) {
 async function removeProductImage (req, res) {
     try {
         const {productId} = req.params
+        if (!productId) {
+            return res.json({success: false, message: "Please provide productId"})
+        }
         const product = await Product.findById(productId)
         // check if product exists
         if (!product) {
@@ -194,7 +212,7 @@ async function removeProductImage (req, res) {
             const updatedProduct = await Product.findByIdAndUpdate(productId, {$pull: {images:product.images[deleteIndex]}}, {new: true})
 
             if (!updatedProduct) {
-                return res.json({ success: false, message: 'Failed to update product' });
+                return res.json({ success: false, message: 'Failed to update product images' });
             }
             
             return res.json({success: true, message: 'Image removed successfully'})
@@ -218,7 +236,12 @@ async function deleteProduct (req, res) {
         if (!product) {
             return res.json({success: false, message: 'Product not found'})
         }
-        await Product.findByIdAndDelete(productId)
+
+        await Favourite.deleteMany({product: product._id})
+        await ReviewModel.deleteMany({product_id: product._id})
+        await FlashModel.deleteOne({product: product._id})
+
+        await Product.findOneAndDelete({_id: productId})
         res.json({success: true, message: 'Product deleted successfully'})
 
     } catch (error) {
