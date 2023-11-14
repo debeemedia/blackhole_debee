@@ -74,7 +74,7 @@ async function deleteFavourite(req, res) {
       return res.json({ success: false, message: 'You are not authorized to perform this action' });
     }
 
-    await favorite.remove();
+    await Favourites.findByIdAndDelete(favoriteId)
     res.json({ success: true, message: 'Removed from favorites' });
   } catch (error) {
     res.json({ success: false, error: 'Internal server error' });
