@@ -54,6 +54,9 @@ const orderSchema = mongoose.Schema({
     },
     tx_ref: {
         type: String
+    },
+    order_ref: {
+        type: String
     }
 })
 
