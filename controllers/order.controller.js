@@ -1,4 +1,5 @@
 const OrderModel = require("../models/order.model");
+const debeerandomgen = require('debeerandomgen')
 const validateData = require("../utils/validate");
 const { empty } = require("../utils/helpers");
 const PaymentModel = require("../models/payment.model");
@@ -18,7 +19,8 @@ async function createOrder(req, res, next) {
         currency,
         order_date,
         delivery_date,
-        tx_ref
+        tx_ref,
+        order_ref
     } = req.body;
 
     const validationRule = {
@@ -48,6 +50,9 @@ async function createOrder(req, res, next) {
             return res.json({success: false, message: 'You are not logged in. Please login to make order'})
         }
 
+        // generate unique timestamp and use last four digits; concatenate with randomnly generated string from debeerandomgen package to form unique order_ref
+        const timestamp = Date.now().toString(36).slice(-4)
+
         const newOrder = new OrderModel({
             user_id,
             street_address,
@@ -61,7 +66,9 @@ async function createOrder(req, res, next) {
             currency,
             order_date,
             delivery_date,
-            tx_ref})
+            tx_ref,
+            order_ref: `${timestamp}${debeerandomgen(4)}`
+        })
 
             await newOrder.save()
 
