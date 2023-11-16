@@ -253,7 +253,9 @@ async function getAllOrdersForVendor(req, res) {
                 vendorOrders.push(newDetails)
             }
         }
-
+        if (vendorOrders.length == 0) {
+            return res.json({success: false, message: `You have no order for your products`})
+        }
         res.json({success: true, message: vendorOrders})
     } catch (error) {
         res.json({success: false, error: error.message})
