@@ -249,7 +249,7 @@ async function getAllOrdersForVendor(req, res) {
                    continue
                 }
 
-                const newDetails = {product_name: productDetails.name, quantity: product.quantity, order_id}
+                const newDetails = {product_name: productDetails.name, quantity: product.quantity, price: product.price, order_id}
                 vendorOrders.push(newDetails)
             }
         }
