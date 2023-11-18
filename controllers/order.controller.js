@@ -241,6 +241,7 @@ async function getAllOrdersForVendor(req, res) {
 
         for (const order of orders) {
             const order_id = order._id
+            const date = order.order_date
 
             for (const product of order.products) {
                 const productDetails = await ProductModel.findById(product.product_id)
@@ -249,7 +250,7 @@ async function getAllOrdersForVendor(req, res) {
                    continue
                 }
 
-                const newDetails = {product_name: productDetails.name, quantity: product.quantity, price: product.price, order_id}
+                const newDetails = {product_name: productDetails.name, quantity: product.quantity, price: product.price, order_id, date}
                 vendorOrders.push(newDetails)
             }
         }
