@@ -4,6 +4,8 @@ const validateData = require("../utils/validate");
 const { empty } = require("../utils/helpers");
 const PaymentModel = require("../models/payment.model");
 const ProductModel = require("../models/product.model");
+const UserModel = require("../models/user.model");
+const { buildEmailTemplate, sendMail } = require("../utils/mail");
 
 async function createOrder(req, res, next) {
     const user_id = req.user.id
@@ -71,6 +73,16 @@ async function createOrder(req, res, next) {
         })
 
             await newOrder.save()
+
+            // send mail on successful order creation
+            const user = await UserModel.findById(user_id)
+            const emailOption = {
+                to: user.email,
+                from: "Aphia",
+                subject: "Order Created",
+                html: await buildEmailTemplate("order_creation.ejs", newOrder),
+            };
+            await sendMail(emailOption, res);
 
             // res.json({success: true, message: 'Order created successfully'})
             req.order = newOrder
