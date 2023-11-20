@@ -127,6 +127,7 @@ async function updateUser(req, res) {
     res.json({ success: true, message: "user updated successfully" });
 }
 
+// internal deletion of a user's account by the user
 async function deleteUser(req, res) {
   try {
     // get the user id from the decoded user in jwt
