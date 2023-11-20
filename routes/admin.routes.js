@@ -1,9 +1,13 @@
 const express = require('express')
-const { ROUTE_ADMIN_DELETE_USER, ROUTE_ADMIN_VERIFY_USER, ROUTE_ADMIN_DELETE_PRODUCT, ROUTE_ADMIN_CATEGORY_CREATE, ROUTE_ADMIN_CATEGORY_UPDATE, ROUTE_ADMIN_CATEGORY_DELETE } = require('../lib/page-route')
+const { ROUTE_ADMIN_DELETE_USER, ROUTE_ADMIN_VERIFY_USER, ROUTE_ADMIN_DELETE_PRODUCT, ROUTE_ADMIN_CATEGORY_CREATE, ROUTE_ADMIN_CATEGORY_UPDATE, ROUTE_ADMIN_CATEGORY_DELETE, ROUTE_ADMIN_CHANGE_USER } = require('../lib/page-route')
 const { authenticate } = require('../middleware/auth')
 const { checkAdmin } = require('../middleware/check.admin')
-const { deleteUserById, verifyUser, deleteProductById, createCategory, updateCategory, deleteCategory } = require('../controllers/admin.controller')
+const { deleteUserById, verifyUser, deleteProductById, createCategory, updateCategory, deleteCategory, userToAdmin } = require('../controllers/admin.controller')
 const router = express.Router()
+
+// ADMIN-RELATED ADMIN ROUTES
+router.put(ROUTE_ADMIN_CHANGE_USER, authenticate, checkAdmin, userToAdmin)
+
 
 // USER-RELATED ADMIN ROUTES
 

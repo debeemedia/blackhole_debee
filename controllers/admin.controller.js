@@ -8,6 +8,36 @@ const { ReviewModel } = require("../models/review.model");
 const UserModel = require("../models/user.model");
 const { empty } = require("../utils/helpers");
 
+// ADMIN-RELATED ADMIN PERMISSIONS
+
+// function to change a user's role to admin (only admin can do this)
+async function userToAdmin (req, res) {
+    try {
+        // get the id of the user whose role is to be changed to admin from the req.params
+        const {userId} = req.params;
+        // validate user id
+        if(empty(userId)){
+            return res.json({success: false, message: 'Please provide a valid userId'})
+        }
+        // check if user exists
+        const user = await UserModel.findById(userId)
+        if(empty(user)){
+            return res.json({success: false, message: 'User not found'})
+        }
+        // check if the user is already an admin
+        if (user.role === 'admin') {
+            return res.json({ success: false, message: 'User is already an admin' });
+        }
+        // change user's role to admin
+        await UserModel.findByIdAndUpdate(userId, {role: 'admin'})
+
+        res.json({ success: true, message: "User updated to admin successfully" });
+
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: "Internal server error" });
+    }
+}
 
 // USER-RELATED ADMIN PERMISSIONS
 
@@ -24,6 +54,10 @@ async function deleteUserById(req, res) {
         const user = await UserModel.findById(userId)
         if(empty(user)){
             return res.json({success: false, message: 'User not found'})
+        }
+        // check if user is an admin
+        if (user.role === 'admin') {
+            return res.json({success: false, message: 'You cannot delete an admin'})
         }
         // delete resources dependent on user
         await ProductModel.deleteMany({user_id: userId})
@@ -201,6 +235,7 @@ async function deleteCategory(req,res){
 }
 
 module.exports = {
+    userToAdmin,
     deleteUserById,
     verifyUser,
     deleteProductById,
