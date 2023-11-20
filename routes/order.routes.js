@@ -14,7 +14,7 @@ router.get(ROUTE_ORDER_ALL_BY_USER, authenticate, getAllOrdersByUser)
 router.get(ROUTE_ORDER_ONE_BY_USER, authenticate, getAnOrderByUser)
 router.get(ROUTE_ORDER_ALL, getAllOrders)
 router.delete(ROUTE_ORDER_DELETE, authenticate, deleteOrder)
-router.get(ROUTE_ORDER_VENDOR_ORDERS, authenticate, checkVendor, getAllOrdersForVendor)
+router.get(ROUTE_ORDER_VENDOR_ORDERS, authenticate, getAllOrdersForVendor)
 
 
 module.exports.orderRouter = router
