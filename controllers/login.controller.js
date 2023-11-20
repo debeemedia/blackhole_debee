@@ -1,7 +1,8 @@
 require('dotenv').config()
 const User = require("../models/user.model");
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const VendorModel = require('../models/vendor.model');
 
 async function login (req, res) {
     try {
@@ -23,8 +24,23 @@ async function login (req, res) {
                     return res.json({success: false, message: 'user is not verified'})
                 }
 
-                // issue token
-                const token = jwt.sign({id: user._id, email: user.email, username: user.username, role: user.role}, process.env.TOKEN_SECRET, {expiresIn: '2h'})
+                // issue jwt token
+                // define payload
+                const payload = {
+                    id: user._id,
+                    email: user.email,
+                    username: user.username,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    role: user.role,
+                  };
+                // add business_name to payload if user is a vendor
+                if (user.role === 'vendor' && user.business_name) {
+                    payload.business_name = user.business_name;
+                }
+
+                const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '2h' });
+                // console.log('JWT Payload:', jwt.decode(token));
 
                 res.json({success: true, message: token})
 
