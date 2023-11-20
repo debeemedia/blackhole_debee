@@ -150,29 +150,6 @@ async function deleteUser(req, res) {
   }
 }
 
-// external deletion of a user's account by e.g admin (middleware to check for admin implemented)
-async function deleteUserById(req, res) {
-  try {
-    // get the id of the user to be deleted from the req.params
-    const {userId} = req.params;
-    if(empty(userId)){
-        return res.json({success: false, message: 'Please provide a userId'})
-    }
-    await ProductModel.deleteMany({user_id: userId})
-    await OrderModel.deleteMany({ user_id: userId });
-    await ReviewModel.deleteMany({user_id: userId})
-    await PaymentModel.deleteMany({user_id: userId})
-    await Favourite.deleteMany({user_id: userId})
-    await FlashModel.deleteMany({user_id: userId})
-    
-    await UserModel.findOneAndDelete({_id: userId})
-
-    res.json({ success: true, message: "user deleted successfully" });
-  } catch (error) {
-    res.json({ success: false, message: "Internal Server error" });
-  }
-}
-
 // Resend email
 async function resendMail(req, res){
   try {
@@ -204,6 +181,5 @@ module.exports = {
   getUsers,
   updateUser,
   deleteUser,
-  deleteUserById,
   resendMail
 };
