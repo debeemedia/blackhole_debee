@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 const { getUsers, createUser, updateUser, deleteUser, resendMail } = require('../controllers/user.controller')
 const { createVendor } = require('../controllers/vendor.controller')
-const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET, ROUTE_USER_DELETE, ROUTE_RESEND, ROUTE_FORGOT_PASSWORD, ROUTE_RESET_PASSWORD, ROUTE_BANK_VERIFY } = require('../lib/page-route')
+const { ROUTE_HOME, ROUTE_USER_REGISTER, ROUTE_VERIFY, ROUTE_VENDOR_REGISTER, ROUTE_USER_LOGIN, ROUTE_USER_LOGOUT, ROUTE_USER_UPDATE, ROUTE_USERS_GET, ROUTE_USER_DELETE, ROUTE_RESEND, ROUTE_FORGOT_PASSWORD, ROUTE_RESET_PASSWORD, ROUTE_BANK_VERIFY, ROUTE_USER_DELETE_EXTERNAL, ROUTE_USER_UPGRADE } = require('../lib/page-route')
 const { verifyEmail, sendConfirmationMail } = require('../controllers/verify.email.controller')
 const { login } = require('../controllers/login.controller')
 const { logout } = require('../controllers/logout.controller')
@@ -11,6 +11,7 @@ const { authenticate } = require('../middleware/auth')
 const { generateToken, resetPassword } = require('../controllers/password.recovery')
 const { profile_upload } = require('../utils/image.upload')
 const { verifyBank } = require('../controllers/verify.bank.controller')
+const { upgradeUserToVendor } = require('../controllers/upgrade.controller')
 
 //register as a user 
 // router.route(ROUTE_HOME).get(getUsers)
@@ -37,6 +38,10 @@ router.get(ROUTE_USER_LOGOUT, logout)
 // update user details
 router.put(ROUTE_USER_UPDATE, authenticate, profile_upload.single('profile_image'), updateUser)
 
+// upgrade user to vendor
+router.put(ROUTE_USER_UPGRADE, authenticate, upgradeUserToVendor)
+
+// delete user account by user
 router.delete(ROUTE_USER_DELETE, authenticate, deleteUser)
 
 // forgot password
@@ -47,7 +52,5 @@ router.post(ROUTE_RESET_PASSWORD, resetPassword)
 
 // verify vendor's bank account
 router.post(ROUTE_BANK_VERIFY, verifyBank)
-
-
 
 module.exports.userRouter = router
