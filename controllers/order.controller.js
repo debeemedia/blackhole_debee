@@ -3,6 +3,7 @@ const debeerandomgen = require('debeerandomgen')
 const validateData = require("../utils/validate");
 const { empty } = require("../utils/helpers");
 const PaymentModel = require("../models/payment.model");
+const ProductModel = require("../models/product.model");
 
 async function createOrder(req, res, next) {
     const user_id = req.user.id
@@ -227,11 +228,47 @@ async function markDelivered(req, res) {
     }
 }
 
+async function getAllOrdersForVendor(req, res) {
+    try {
+        const {id} = req.user
+        const orders = await OrderModel.find({completed: true})
+
+        if (orders.length == 0) {
+            return res.json({success: false, message: `No order present`})
+        }
+
+        const vendorOrders = []
+
+        for (const order of orders) {
+            const order_id = order._id
+            const date = order.order_date
+
+            for (const product of order.products) {
+                const productDetails = await ProductModel.findById(product.product_id)
+                
+                if (productDetails.user_id != id) {
+                   continue
+                }
+
+                const newDetails = {product_name: productDetails.name, quantity: product.quantity, price: product.price, order_id, date}
+                vendorOrders.push(newDetails)
+            }
+        }
+        if (vendorOrders.length == 0) {
+            return res.json({success: false, message: `You have no order for your products`})
+        }
+        res.json({success: true, message: vendorOrders})
+    } catch (error) {
+        res.json({success: false, error: error.message})
+    }
+}
+
 module.exports = {
     markDelivered,
     createOrder,
     getAllOrdersByUser,
     getAllOrders,
     getAnOrderByUser,
-    deleteOrder
+    deleteOrder,
+    getAllOrdersForVendor
 }
