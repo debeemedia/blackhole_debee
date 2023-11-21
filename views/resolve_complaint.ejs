@@ -64,14 +64,11 @@
         <img src="https://res.cloudinary.com/dkbsyvcpa/image/upload/v1697630206/aphia-image.jpg" alt="aphia logo" />
       </header>
       <div class="section-body">
-        <h1 class="email-heading section-body">Account Confirmation!</h1>
-        <p class="email-message">Welcome <%= first_name %>,</p>
+        <h1 class="email-heading section-body">Complaint Resolved</h1>
         <p class="email-message">
-          Your account with Aphia is now verified! You can continue on our website
-          <p>
-              To continue <a href="https://aphia-stores.vercel.app/login">Click here</a>
-            </p>
-          
+            Hi <%= name %>
+            <p class="email-message"><%= message %></p>
+            <p class="email-message">Your Ticket No: <%= ticket_no %></p>
         </p>
       </div>
       <footer>
