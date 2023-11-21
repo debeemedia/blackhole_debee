@@ -264,7 +264,7 @@ async function getAllOrdersForVendor(req, res) {
                    continue
                 }
 
-                const newDetails = {product_name: productDetails.name, quantity: product.quantity, price: product.price, category: product.category_id, image: product.images[0]}
+                const newDetails = {product_name: productDetails.name, quantity: product.quantity, price: product.price, category_id: productDetails.category_id, image: productDetails.images[0]}
                 productsArr.push(newDetails)
             }
             const orderDetais = {order_id, products: productsArr, date}

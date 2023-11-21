@@ -9,7 +9,7 @@ async function makeComplaint(req, res) {
         const user = await UserModel.findById(id);
 
         const { description, order_no } = req.body;
-        if (!description || order_no) {
+        if (!description || !order_no) {
             return res.json({
                 success: false,
                 message: `Please provide required fields`,
