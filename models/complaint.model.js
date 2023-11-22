@@ -10,11 +10,11 @@ const complaintSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    order_no: {
+    order_ref: {
         type: String,
         required: true
     },
-    ticket_no : {
+    ticket_id : {
         type: String,
         required: true
     },
