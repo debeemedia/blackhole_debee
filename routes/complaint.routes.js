@@ -9,7 +9,7 @@ const router = express.Router()
 
 
 router.post(ROUTE_COMPLIANT_MAKE, authenticate, makeComplaint)
-router.put(ROUTE_COMPLIANT_RESOLVE, checkAdmin, markResolved)
-router.delete(ROUTE_COMPLIANT_REMOVE, checkAdmin, deleteComplaint)
+router.put(ROUTE_COMPLIANT_RESOLVE, authenticate, checkAdmin, markResolved)
+router.delete(ROUTE_COMPLIANT_REMOVE, authenticate, checkAdmin, deleteComplaint)
 
 module.exports.complaintRouter = router
