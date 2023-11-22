@@ -160,9 +160,44 @@ async function deleteReview(req,res){
     }
 }
 
+async function getVendorReviews(req, res){
+    try {
+        const {id} = req.user
+        const reviews = await ReviewModel.find().populate('user_id product_id');
+
+        if (reviews.length == 0) {
+            res.json({success: false, message: `No review found`})
+        }
+
+        const reviewDetails = []
+
+        for (const review of reviews) {
+
+            if (review.product_id.user_id != id) {
+                continue
+            }
+
+            const details = {comment: review.comment, rating: review.rating, by: review.user_id.username, product: review.product_id.name, date: review.createdAt}
+
+            reviewDetails.push(details)
+        }
+
+        if (reviewDetails.length == 0) {
+            res.json({success: false, message: `You have no review for any of your products`})
+        }
+
+        res.json({success: true, message: reviewDetails})
+
+    } catch (error) {
+        console.log(error)
+        res.json({success: false, message: `Internal server error`})
+    }
+}
+
 module.exports = {
     addReview,
     getProductReviews,
     updateReview,
-    deleteReview
+    deleteReview,
+    getVendorReviews
 }
