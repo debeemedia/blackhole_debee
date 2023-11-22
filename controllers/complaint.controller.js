@@ -115,8 +115,24 @@ async function deleteComplaint(req, res) {
 }
 
 
+async function getAllComplaint(req, res) {
+    try {
+        const complaints = await ComplaintModel.find()
+        if (complaints.length == 0) {
+            res.json({success: false, message: `No complaint found `})
+        } else {
+            res.json({success: true, message: complaints})
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+}
+
+
 module.exports = {
     deleteComplaint,
     makeComplaint,
-    markResolved
+    markResolved,
+    getAllComplaint
 }
