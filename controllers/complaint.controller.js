@@ -8,8 +8,8 @@ async function makeComplaint(req, res) {
         const { id } = req.user;
         const user = await UserModel.findById(id);
 
-        const { description, order_no } = req.body;
-        if (!description || !order_no) {
+        const { description, order_ref } = req.body;
+        if (!description || !order_ref) {
             return res.json({
                 success: false,
                 message: `Please provide required fields`,
@@ -17,17 +17,17 @@ async function makeComplaint(req, res) {
         }
 
         const timestamp = Date.now().toString(36).slice(-4);
-        const ticket_no = `${timestamp}${debeerandomgen(2)}`;
+        const ticket_id = `${timestamp}${debeerandomgen(2)}`;
 
         const newComplaint = new ComplaintModel({
             description,
-            order_no,
+            order_ref,
             user_id: id,
-            ticket_no,
+            ticket_id,
         });
         await newComplaint.save();
 
-        const details = { name: user.first_name, ticket_no };
+        const details = { name: user.first_name, ticket_id };
 
         const emailOption = {
             to: user.email,
@@ -50,7 +50,7 @@ async function makeComplaint(req, res) {
 async function markResolved(req, res) {
     try {
         const { message } = req.body;
-        const ticket_no = req.params.ticketNo;
+        const ticket_id = req.params.ticketId;
 
         if (!message) {
             return res.json({
@@ -59,21 +59,21 @@ async function markResolved(req, res) {
             });
         }
 
-        if (!ticket_no) {
+        if (!ticket_id) {
             return res.json({
                 success: false,
                 message: `Please provide Ticket No`,
             });
         }
 
-        const complaint = await ComplaintModel.findOne({ ticket_no });
+        const complaint = await ComplaintModel.findOne({ ticket_id });
         if (!complaint) {
             return res.json({ success: false, message: `Complaint not found` });
         }
 
         const user = await UserModel.findById(complaint.user_id);
 
-        const details = { message, ticket_no, name: user.first_name };
+        const details = { message, ticket_id, name: user.first_name };
         const emailOption = {
             to: user.email,
             from: "Aphia",
