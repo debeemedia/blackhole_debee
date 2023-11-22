@@ -110,7 +110,22 @@ async function deleteComplaint(req, res) {
         }
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+        return res.json({ success: false, message: 'Internal Server Error' });
+    }
+}
+
+
+async function getAllComplaint(req, res) {
+    try {
+        const complaints = await ComplaintModel.find()
+        if (complaints.length == 0) {
+            res.json({success: false, message: `No complaint found `})
+        } else {
+            res.json({success: true, message: complaints})
+        }
+    } catch (error) {
+        console.error(error);
+        return res.json({ success: false, message: 'Internal Server Error' });
     }
 }
 
@@ -118,5 +133,6 @@ async function deleteComplaint(req, res) {
 module.exports = {
     deleteComplaint,
     makeComplaint,
-    markResolved
+    markResolved,
+    getAllComplaint
 }
