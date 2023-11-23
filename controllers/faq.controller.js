@@ -20,7 +20,7 @@ async function addQuestion(req,res) {
 
 async function getQuestions(req,res) {
     try {
-        const questions = await FaqModel.find().select('-__V')
+        const questions = await FaqModel.find().select('-__v')
 
         if (questions.length == 0) {
             return res.json({success: false, message: `No question found`})
