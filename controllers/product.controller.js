@@ -205,7 +205,7 @@ async function removeProductImage (req, res) {
         }
 
         // get the index of the image to be deleted from the request body
-        const deleteIndex = +req.body.deleteIndex
+        const deleteIndex = +req.body.delete_index
 
         // check if the deleteIndex is valid and then delete the image by the index from the database
         if (deleteIndex >= 0 && deleteIndex < product.images.length) {
