@@ -10,6 +10,7 @@ const { favoritesRouter } = require('./favorites.routes')
 const { paymentRouter } = require('./payment.routes')
 const { flashRouter } = require('./flash.routes')
 const { adminRouter } = require('./admin.routes')
+const { complaintRouter } = require('./complaint.routes')
 const router = express.Router()
 
 
@@ -23,6 +24,7 @@ router.use('/favorites', favoritesRouter)
 router.use('/payments', paymentRouter)
 router.use('/flash', flashRouter)
 router.use('/admin', adminRouter)
+router.use('/complaints', complaintRouter)
 
 
 module.exports = router
