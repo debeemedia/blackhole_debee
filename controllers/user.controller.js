@@ -135,6 +135,12 @@ async function deleteUser(req, res) {
   if(empty(userId)){
       return res.json({success: false, message: 'Something went wrong. Please try again'})
   }
+  const products = await ProductModel.find({ user_id: userId });
+    for (const product of products) {
+      // Delete reviews associated with the product
+      await ReviewModel.deleteMany({ product_id: product._id });
+    }
+
   await ProductModel.deleteMany({user_id: userId})
   await OrderModel.deleteMany({ user_id: userId });
   await ReviewModel.deleteMany({user_id: userId})
