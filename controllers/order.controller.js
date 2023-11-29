@@ -266,9 +266,9 @@ async function getAllOrdersForVendor(req, res) {
 
                 const newDetails = {product_name: productDetails.name, quantity: product.quantity, price: product.price, category_id: productDetails.category_id, image: productDetails.images[0]}
                 productsArr.push(newDetails)
+                const orderDetais = {order_id, products: productsArr, date}
+                vendorOrders.push(orderDetais)
             }
-            const orderDetais = {order_id, products: productsArr, date}
-            vendorOrders.push(orderDetais)
         }
         if (vendorOrders.length == 0) {
             return res.json({success: false, message: `You have no order for your products`})
