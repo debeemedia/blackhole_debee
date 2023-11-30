@@ -243,7 +243,7 @@ async function markDelivered(req, res) {
 async function getAllOrdersForVendor(req, res) {
     try {
         const {id} = req.user
-        const orders = await OrderModel.find({completed: true})
+        const orders = await OrderModel.find()
 
         if (orders.length == 0) {
             return res.json({success: false, message: `No order present`})
@@ -253,6 +253,7 @@ async function getAllOrdersForVendor(req, res) {
         for (const order of orders) {
             const orderDetails = {}
             const order_id = order._id
+            const completed = order.completed
             const date = order.order_date
             const productsArr = []
             
@@ -267,6 +268,7 @@ async function getAllOrdersForVendor(req, res) {
                 productsArr.push(newDetails)
                 orderDetails.order_id = order_id
                 orderDetails.products = productsArr
+                orderDetails.completed = completed
                 orderDetails.date = date
             }
             if (!orderDetails.products) {
