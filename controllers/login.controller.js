@@ -42,7 +42,7 @@ async function login (req, res) {
                 const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '2h' });
                 // console.log('JWT Payload:', jwt.decode(token));
 
-                res.json({success: true, message: token})
+                res.json({success: true, message: token, role: user.role})
 
             } else {
                 return res.json({success: false, message: 'Incorrect Credentials'})

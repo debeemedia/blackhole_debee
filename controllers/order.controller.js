@@ -242,33 +242,40 @@ async function markDelivered(req, res) {
 
 async function getAllOrdersForVendor(req, res) {
     try {
-        
         const {id} = req.user
-        const orders = await OrderModel.find({completed: true})
+        const orders = await OrderModel.find()
 
         if (orders.length == 0) {
             return res.json({success: false, message: `No order present`})
         }
 
         const vendorOrders = []
-
         for (const order of orders) {
+            const orderDetails = {}
             const order_id = order._id
+            const completed = order.completed
             const date = order.order_date
             const productsArr = []
-
+            
             for (const product of order.products) {
                 const productDetails = await ProductModel.findById(product.product_id)
                 
                 if (productDetails.user_id != id) {
-                   continue
+                    continue
                 }
-
+                
                 const newDetails = {product_name: productDetails.name, quantity: product.quantity, price: product.price, category_id: productDetails.category_id, image: productDetails.images[0]}
                 productsArr.push(newDetails)
+                orderDetails.order_id = order_id
+                orderDetails.products = productsArr
+                orderDetails.completed = completed
+                orderDetails.date = date
             }
-            const orderDetais = {order_id, products: productsArr, date}
-            vendorOrders.push(orderDetais)
+            if (!orderDetails.products) {
+                continue
+            } else {
+                vendorOrders.push(orderDetails)
+            }
         }
         if (vendorOrders.length == 0) {
             return res.json({success: false, message: `You have no order for your products`})
