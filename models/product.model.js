@@ -12,16 +12,16 @@ const productSchema = new mongoose.Schema(
         },
         name: {
             type: String,
-            // required: true,
+            required: true,
             trim: true
         },
         description: {
             type: String,
-            // required: true
+            required: true
         },
         price: {
             type: Number,
-            // required: true
+            required: true
         },
         images: [{
             type: String,
@@ -33,7 +33,7 @@ const productSchema = new mongoose.Schema(
         category_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category',
-            // required: true
+            required: true
         },
         quantity: {
             type: Number,

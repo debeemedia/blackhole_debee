@@ -28,11 +28,11 @@ async function createProduct (req, res) {
         // validate input
         const error = {};
         const validateRule = {
-            name: "string|",
-            description: "string|",
-            price: "",
+            name: "string|required",
+            description: "string|required",
+            price: "required",
             images: "array|min:1",
-            category_id: "",
+            category_id: "required",
             quantity: "min:1"
         };
         const validateMessage = {
@@ -68,11 +68,11 @@ async function createProduct (req, res) {
         // create new product and save to database
         const newProduct = new Product({
             user_id,
-            name,
-            description,
-            price,
+            name: 'tsdkd',
+            description: 'didie',
+            price: 455,
             images: image_urls,
-            category_id,
+            category_id: '654b803db09d5d88bd0abdb6',
             quantity
         });
 
