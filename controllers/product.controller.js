@@ -3,6 +3,7 @@ const Favourite = require("../models/favourite.model");
 const { FlashModel } = require("../models/flashSale.model");
 const Product = require("../models/product.model");
 const { ReviewModel } = require("../models/review.model");
+const UserModel = require("../models/user.model");
 const { empty } = require("../utils/helpers");
 const validateData = require("../utils/validate");
 
@@ -11,7 +12,9 @@ const validateData = require("../utils/validate");
 async function createProduct (req, res) {
     try {
         // get the id of the logged-in vendor
-        const user_id = req.user.id
+        // const user_id = req.user.id
+        const user = await UserModel.findOne({email: 'okekedeborah@gmail.com'})
+        const user_id = user._id
 
         // destructure request body
         const {

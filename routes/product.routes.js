@@ -13,7 +13,7 @@ const productRouter = express.Router()
 // routes
 
 // POST/CREATE
-productRouter.post(ROUTE_PRODUCT_CREATE, authenticate, checkVendor, product_upload.array('product_image'), createProduct) // create a product
+productRouter.post(ROUTE_PRODUCT_CREATE, product_upload.array('product_image'), createProduct) // create a product
 
 // GET/READ
 productRouter.get(ROUTE_PRODUCT_GET_ALL, getProducts) // get all products
