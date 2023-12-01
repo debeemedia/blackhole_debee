@@ -28,11 +28,11 @@ async function createProduct (req, res) {
         // validate input
         const error = {};
         const validateRule = {
-            name: "string|required",
-            description: "string|required",
-            price: "required",
+            name: "string|",
+            description: "string|",
+            price: "",
             images: "array|min:1",
-            category_id: "required",
+            category_id: "",
             quantity: "min:1"
         };
         const validateMessage = {
